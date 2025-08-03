@@ -25,7 +25,7 @@ pip install git+https://github.com/NVIDIA/NeMo-Run.git@6550ff68204e5095452098eed
 python ${NEMO_LAUNCH_SCRIPT} --factory "recipe()" \
 trainer.num_nodes="$NNODES" \
 log.explicit_log_dir="${explicit_log_dir}" \
-trainer.max_steps=10 trainer.devices=8 \
+trainer.max_steps=10 trainer.devices="${GPUS_PER_NODE}" \
 --to-yaml exported_nemo_config.yaml
 
 # Create the nsys directory.
@@ -47,7 +47,7 @@ torchrun \
     ${NEMO_LAUNCH_SCRIPT} --factory "recipe()" \
 trainer.num_nodes="$NNODES" \
 log.explicit_log_dir="${explicit_log_dir}" \
-trainer.max_steps=10  trainer.devices=8
+trainer.max_steps=10  trainer.devices="${GPUS_PER_NODE}"
 
 if [[ "$JOB_COMPLETION_INDEX" == "0" ]]; then
   cp ${NEMO_LAUNCH_SCRIPT} ${explicit_log_dir}/run-cli.py

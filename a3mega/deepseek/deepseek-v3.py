@@ -56,10 +56,11 @@ def recipe(
   )
   
   #Recipe 2 layer:
-  pretrain.model.config.num_layers = 2
+  pretrain.model.config.num_layers = 4
   pretrain.model.config.moe_layer_freq = [0, 1]
   pretrain.trainer.strategy.pipeline_model_parallel_size = 1
-  pretrain.trainer.strategy.expert_model_parallel_size = 8
+  pretrain.trainer.strategy.tensor_model_parallel_size=8
+  pretrain.trainer.strategy.expert_model_parallel_size = 8 
   pretrain.trainer.strategy.virtual_pipeline_model_parallel_size = None
   pretrain.trainer.strategy.expert_tensor_parallel_size = 1
 
