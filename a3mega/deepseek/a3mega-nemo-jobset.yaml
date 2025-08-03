@@ -138,7 +138,7 @@ spec:
               - name: MASTER_PORT
                 value: "3389"
               - name: MAX_STEPS
-              #  value: "1000"
+                value: "1000"
               - name: NNODES
                 value: "16"
               - name: GPUS_PER_NODE

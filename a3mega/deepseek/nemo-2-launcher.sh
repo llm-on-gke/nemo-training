@@ -47,7 +47,7 @@ torchrun \
     ${NEMO_LAUNCH_SCRIPT} --factory "recipe()" \
 trainer.num_nodes="$NNODES" \
 log.explicit_log_dir="${explicit_log_dir}" \
-trainer.max_steps="${MAX_STEPS}}"  trainer.devices="${GPUS_PER_NODE}"
+trainer.max_steps="${MAX_STEPS}"  trainer.devices="${GPUS_PER_NODE}"
 
 if [[ "$JOB_COMPLETION_INDEX" == "0" ]]; then
   cp ${NEMO_LAUNCH_SCRIPT} ${explicit_log_dir}/run-cli.py
