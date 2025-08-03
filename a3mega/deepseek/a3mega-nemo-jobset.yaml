@@ -1,0 +1,222 @@
+# Distributed training of a traditional CNN model to do image classification 
+# using the MNIST dataset and PyTorch.
+apiVersion: jobset.x-k8s.io/v1alpha2
+kind: JobSet
+metadata:
+  name: nemo
+  #labels:
+  #     kueue.x-k8s.io/queue-name: a3-mega
+  #annotations:
+  #     provreq.kueue.x-k8s.io/maxRunDurationDays: "7"
+  #End for dws
+spec:
+  replicatedJobs:
+  - name: workload
+    template:
+      spec:
+        parallelism: 2
+        completions: 2
+        # suspend: true # DWS
+        backoffLimit: 0
+        template:
+          metadata:
+              annotations:
+                gke-gcsfuse/volumes: "true"
+          spec:
+            #schedulingGates:
+            #- name: "gke.io/topology-aware-auto-scheduling-pytorch"
+            restartPolicy: Never # dws
+            hostNetwork: true
+            dnsPolicy: ClusterFirstWithHostNet
+            nodeSelector:
+              # cloud.google.com/gke-nodepool: dws-a3-mega #for dws
+              cloud.google.com/gke-accelerator: nvidia-h100-mega-80gb #for non dws
+            tolerations:
+               - key: "nvidia.com/gpu"
+                 operator: "Exists"
+                 effect: "NoSchedule"
+            serviceAccountName: storage-access
+            volumes:
+            - name: libraries
+              hostPath:
+                path: /home/kubernetes/bin/nvidia
+            - name: sys
+              hostPath:
+               path: /sys
+            - name: proc-sys
+              hostPath:
+               path: /proc/sys
+            - name: aperture-devices
+              hostPath:
+               path: /dev/aperture_devices
+            - name: local-ssd
+              hostPath:
+                path: /mnt/stateful_partition/kube-ephemeral-ssd
+
+            - name: gcs-fuse-csi-ephemeral
+              csi:
+                 driver: gcsfuse.csi.storage.gke.io
+                 readOnly: false
+                 volumeAttributes:
+                    bucketName: rick-llama-factory
+                    mountOptions: "implicit-dirs"
+                    gcsfuseLoggingSeverity: warning
+            #        fileCacheCapacity: "200Gi"
+
+            - name: dshm
+              emptyDir:
+                medium: Memory
+            #- name: workload-configuration
+            #  configMap:
+            #    name: "workload-config"
+            #    items:
+            #    - key: workload-configuration
+            #      path: workload-configuration
+
+            #- name: workload-launcher
+             # configMap:
+             #   name: "workload-launcher"
+
+
+            initContainers:
+            - name: tcpxo-daemon
+              image: us-docker.pkg.dev/gce-ai-infra/gpudirect-tcpxo/tcpgpudmarxd-dev:v1.0.17
+              imagePullPolicy: IfNotPresent
+              restartPolicy: Always
+              securityContext:
+                privileged: true
+                
+              volumeMounts:
+               - name: libraries
+                 mountPath: /usr/local/nvidia
+               - name: sys
+                 mountPath: /hostsysfs
+               - name: proc-sys
+                 mountPath: /hostprocsysfs
+              env:
+                - name: LD_LIBRARY_PATH
+                  value: /usr/local/nvidia/lib64
+            containers:
+            - name: pytorch
+              image: nvcr.io/nvidia/nemo:25.07 
+              imagePullPolicy: Always
+              # image: gcr.io/k8s-staging-jobset/pytorch-mnist:latest
+              ports:
+              - containerPort: 3389
+              env:
+              - name: HF_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: hf-secret
+                    key: hf_api_token
+              - name: HUGGING_FACE_HUB_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: hf-secret
+                    key: hf_api_token
+              - name: JOB_IDENTIFIER
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.annotations['jobset.sigs.k8s.io/jobset-name']
+              - name: JOB_ORCHESTRATOR
+                value: "gke"
+              # Add RANK based on the pod's index provided by the Indexed Job
+              # This is crucial for torch.distributed initialization.
+              - name: JOB_COMPLETION_INDEX
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.annotations['batch.kubernetes.io/job-completion-index']
+              - name: REPLICATED_JOB_NAME
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.annotations['jobset.sigs.k8s.io/replicatedjob-name']
+              - name: JOBSET_NAME
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.annotations['jobset.sigs.k8s.io/jobset-name']
+              - name: MASTER_ADDR
+                value: "nemo-workload-0-0.nemo.default.svc.cluster.local"
+              - name: MASTER_PORT
+                value: "6002"
+              - name: WORLD_SIZE
+                value: "16"
+              - name: NNODES
+                value: "2"
+              - name: GPUS_PER_NODE
+                value: "8"
+              - name: NEMO_CONFIG_PATH
+                value: "./"
+              - name: NEMO_CONFIG_NAME
+                value: "nemo-config.yaml"
+              - name: EXPERIMENT_NAME
+                value: "nemo-experiments"
+              - name: EXPERIMENT_ROOT_DIR
+                value: "/gcs-dir/"
+              - name: EXPLICIT_LOG_DIR
+                value: "/gcs-dir/nemo-logs"
+              - name: NVTE_FWD_LAYERNORM_SM_MARGIN
+                value: "8"
+              - name: NVTE_BWD_LAYERNORM_SM_MARGIN
+                value: "8"
+              - name: GLOO_SOCKET_IFNAME
+                value: "eth0"
+              - name: TOKENIZER_PATH
+                value: "/artifacts/third-party/tokenizers/gpt2"
+              - name: NEMO_LAUNCH_SCRIPT
+                value: /gcs-dir/nemo-configs/deepseek-v3.py
+  # Force python to not buffer output and write directly to stdout, so we can view training logs via `kubectl logs`.
+              - name: PYTHONUNBUFFERED
+                value: "0"
+              - name: NCCL_DEBUG
+                value: "VERSION"
+              #- name: NCCL_ALGO
+              #  value: "Ring,Tree"
+              - name: NCCL_MIN_NCHANNELS
+                value: "4"
+              - name: LD_LIBRARY_PATH
+                value: /usr/local/nvidia/lib64
+              - name: NCCL_FASTRAK_LLCM_DEVICE_DIRECTORY
+                value: /dev/aperture_devices
+              
+              securityContext:
+                #privileged: true
+              command:
+              - bash
+              - -xc
+              - |
+                NCCL_LIB_DIR="/usr/local/nvidia/lib64"
+                source ${NCCL_LIB_DIR}/nccl-env-profile.sh
+                #sleep infinity
+                bash /gcs-dir/nemo-configs/nemo-2-launcher.sh
+
+              resources:
+                requests:
+                  #cpu: "8"
+                  #memory: "25Gi"
+                  #ephemeral-storage: "25Gi"
+                  nvidia.com/gpu: 8
+                limits:
+                  # cpu: "16"
+                  # memory: "30Gi"
+                  # ephemeral-storage: "30Gi"
+                  nvidia.com/gpu: 8
+              volumeMounts:
+               - name: aperture-devices
+                 mountPath: /dev/aperture_devices
+               - name: libraries
+                 mountPath: /usr/local/nvidia
+               - mountPath: /dev/shm
+                 name: dshm
+               - mountPath: /gcs-dir
+                 name: gcs-fuse-csi-ephemeral
+               - name: local-ssd
+                 mountPath: /data
+
+               #- name: hf-cache
+               #  mountPath: /root/.cache/huggingface
+              
+               #- name: workload-configuration
+               #  mountPath: /workload/configs
+
+               #- name: workload-launcher
+               #  mountPath: /workload/launcher
