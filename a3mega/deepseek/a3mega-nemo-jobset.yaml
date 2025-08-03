@@ -137,22 +137,22 @@ spec:
                 value: "nemo-workload-0-0.nemo.default.svc.cluster.local"
               - name: MASTER_PORT
                 value: "3389"
-              #- name: WORLD_SIZE
-              #  value: "160"
+              - name: MAX_STEPS
+              #  value: "1000"
               - name: NNODES
                 value: "16"
               - name: GPUS_PER_NODE
                 value: "8"
-              - name: NEMO_CONFIG_PATH
-                value: "./"
-              - name: NEMO_CONFIG_NAME
-                value: "nemo-config.yaml"
+              #- name: NEMO_CONFIG_PATH
+              #  value: "./"
+              #- name: NEMO_CONFIG_NAME
+              #  value: "nemo-config.yaml"
               - name: EXPERIMENT_NAME
                 value: "nemo-experiments"
               - name: EXPERIMENT_ROOT_DIR
-                value: "/localssd/"
+                value: "/gcs-dir/"
               - name: EXPLICIT_LOG_DIR
-                value: "/localssd/nemo-logs"
+                value: "/gcs-dir/nemo-logs"
               - name: NVTE_FWD_LAYERNORM_SM_MARGIN
                 value: "8"
               - name: NVTE_BWD_LAYERNORM_SM_MARGIN
