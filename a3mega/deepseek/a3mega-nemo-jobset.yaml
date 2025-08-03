@@ -14,8 +14,8 @@ spec:
   - name: workload
     template:
       spec:
-        parallelism: 16
-        completions: 16
+        parallelism: 32
+        completions: 32
         # suspend: true # DWS
         backoffLimit: 0
         template:
@@ -138,9 +138,9 @@ spec:
               - name: MASTER_PORT
                 value: "3389"
               - name: MAX_STEPS
-                value: "1000"
+                value: "50"
               - name: NNODES
-                value: "16"
+                value: "32"
               - name: GPUS_PER_NODE
                 value: "8"
               #- name: NEMO_CONFIG_PATH
