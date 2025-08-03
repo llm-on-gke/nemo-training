@@ -150,9 +150,9 @@ spec:
               - name: EXPERIMENT_NAME
                 value: "nemo-experiments"
               - name: EXPERIMENT_ROOT_DIR
-                value: "/gcs-dir/"
+                value: "/localssd/"
               - name: EXPLICIT_LOG_DIR
-                value: "/gcs-dir/nemo-logs"
+                value: "/localssd/nemo-logs"
               - name: NVTE_FWD_LAYERNORM_SM_MARGIN
                 value: "8"
               - name: NVTE_BWD_LAYERNORM_SM_MARGIN

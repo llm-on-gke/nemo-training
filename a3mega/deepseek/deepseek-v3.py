@@ -27,7 +27,7 @@ def recipe(
   pretrain = deepseek_v3.pretrain_recipe(num_nodes=1, num_gpus_per_node=8, performance_mode=True)
 
   # Set the number of steps to 50 for a quicker benchmark.
-  pretrain.trainer.max_steps = 50
+  #pretrain.trainer.max_steps = 50
   # Disable validation batches.
   pretrain.trainer.limit_val_batches = 0.0
   pretrain.trainer.val_check_interval = 100
@@ -55,16 +55,16 @@ def recipe(
   )
   
   #Recipe 2 layer:
-  pretrain.model.config.num_layers = 2
-  pretrain.model.config.moe_layer_freq = [0, 1]
+  #pretrain.model.config.num_layers = 2
+  #pretrain.model.config.moe_layer_freq = [0, 1]
   pretrain.trainer.strategy.pipeline_model_parallel_size = 1
   pretrain.trainer.strategy.tensor_model_parallel_size=8
   pretrain.trainer.strategy.expert_model_parallel_size = 8 
-  pretrain.trainer.strategy.virtual_pipeline_model_parallel_size = None
+  #retrain.trainer.strategy.virtual_pipeline_model_parallel_size = None
   pretrain.trainer.strategy.expert_tensor_parallel_size = 1
+  
   #DATA parallism
-  pretrain.trainer.strategy.data_parallel_shard_degree=-1
-  #pretrain.trainer.max_steps = 500
+  #pretrain.trainer.strategy.data_parallel_shard_degree=-1
   
   # Disable checkpointing.
   pretrain.log.ckpt = None
@@ -72,15 +72,6 @@ def recipe(
 
   # Log every step.
   pretrain.trainer.log_every_n_steps = 1
-
-  #data_module = HFDatasetDataModule(
-  #  path_or_dataset="allenai/c4",
-  #  split="train",
-  #  micro_batch_size=1,
-  #  global_batch_size=64,
-  #  seq_length=pretrain.model.config.seq_length,
-  #)
-  #pretrain.data = data_module.train_dataloader()
 
   return pretrain
 
