@@ -4,8 +4,8 @@ apiVersion: jobset.x-k8s.io/v1alpha2
 kind: JobSet
 metadata:
   name: nemo
-  #labels:
-  #     kueue.x-k8s.io/queue-name: a3-mega
+  labels:
+      kueue.x-k8s.io/queue-name: a3-mega
   #annotations:
   #     provreq.kueue.x-k8s.io/maxRunDurationDays: "7"
   #End for dws
@@ -14,14 +14,15 @@ spec:
   - name: workload
     template:
       spec:
-        parallelism: 2
-        completions: 2
+        parallelism: 16
+        completions: 16
         # suspend: true # DWS
         backoffLimit: 0
         template:
           metadata:
               annotations:
                 gke-gcsfuse/volumes: "true"
+                kueue.x-k8s.io/podset-preferred-topology: "kubernetes.io/hostname"
           spec:
             #schedulingGates:
             #- name: "gke.io/topology-aware-auto-scheduling-pytorch"
@@ -58,7 +59,7 @@ spec:
                  driver: gcsfuse.csi.storage.gke.io
                  readOnly: false
                  volumeAttributes:
-                    bucketName: rick-llama-factory
+                    bucketName: rick-nemo-factory
                     mountOptions: "implicit-dirs"
                     gcsfuseLoggingSeverity: warning
             #        fileCacheCapacity: "200Gi"
@@ -76,8 +77,6 @@ spec:
             #- name: workload-launcher
              # configMap:
              #   name: "workload-launcher"
-
-
             initContainers:
             - name: tcpxo-daemon
               image: us-docker.pkg.dev/gce-ai-infra/gpudirect-tcpxo/tcpgpudmarxd-dev:v1.0.17
@@ -137,11 +136,11 @@ spec:
               - name: MASTER_ADDR
                 value: "nemo-workload-0-0.nemo.default.svc.cluster.local"
               - name: MASTER_PORT
-                value: "6002"
-              - name: WORLD_SIZE
-                value: "16"
+                value: "3389"
+              #- name: WORLD_SIZE
+              #  value: "160"
               - name: NNODES
-                value: "2"
+                value: "16"
               - name: GPUS_PER_NODE
                 value: "8"
               - name: NEMO_CONFIG_PATH
@@ -151,9 +150,9 @@ spec:
               - name: EXPERIMENT_NAME
                 value: "nemo-experiments"
               - name: EXPERIMENT_ROOT_DIR
-                value: "/gcs-dir/"
+                value: "/localssd/"
               - name: EXPLICIT_LOG_DIR
-                value: "/gcs-dir/nemo-logs"
+                value: "/localssd/nemo-logs"
               - name: NVTE_FWD_LAYERNORM_SM_MARGIN
                 value: "8"
               - name: NVTE_BWD_LAYERNORM_SM_MARGIN
@@ -167,12 +166,12 @@ spec:
   # Force python to not buffer output and write directly to stdout, so we can view training logs via `kubectl logs`.
               - name: PYTHONUNBUFFERED
                 value: "0"
-              - name: NCCL_DEBUG
-                value: "VERSION"
-              - name: NCCL_ALGO
-                value: "Ring,Tree"
-              - name: NCCL_MIN_NCHANNELS
-                value: "4"
+              #- name: NCCL_DEBUG
+              #  value: "VERSION"
+              #- name: NCCL_ALGO
+              #  value: "Ring,Tree"cd 
+              #- name: NCCL_MIN_NCHANNELS
+              # value: "4"
               - name: LD_LIBRARY_PATH
                 value: /usr/local/nvidia/lib64
               - name: NCCL_FASTRAK_LLCM_DEVICE_DIRECTORY
@@ -186,6 +185,7 @@ spec:
               - |
                 NCCL_LIB_DIR="/usr/local/nvidia/lib64"
                 source ${NCCL_LIB_DIR}/nccl-env-profile.sh
+                #NCCL_DEBUG="INFO"
                 #sleep infinity
                 mkdir /tb_boards
                 bash /gcs-dir/nemo-configs/nemo-2-launcher.sh
@@ -211,7 +211,7 @@ spec:
                - mountPath: /gcs-dir
                  name: gcs-fuse-csi-ephemeral
                - name: local-ssd
-                 mountPath: /data
+                 mountPath: /localssd
 
                #- name: hf-cache
                #  mountPath: /root/.cache/huggingface

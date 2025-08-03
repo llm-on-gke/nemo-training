@@ -28,7 +28,6 @@ def recipe(
 
   # Set the number of steps to 50 for a quicker benchmark.
   pretrain.trainer.max_steps = 50
-
   # Disable validation batches.
   pretrain.trainer.limit_val_batches = 0.0
   pretrain.trainer.val_check_interval = 100
@@ -56,14 +55,17 @@ def recipe(
   )
   
   #Recipe 2 layer:
-  pretrain.model.config.num_layers = 4
+  pretrain.model.config.num_layers = 2
   pretrain.model.config.moe_layer_freq = [0, 1]
   pretrain.trainer.strategy.pipeline_model_parallel_size = 1
   pretrain.trainer.strategy.tensor_model_parallel_size=8
   pretrain.trainer.strategy.expert_model_parallel_size = 8 
   pretrain.trainer.strategy.virtual_pipeline_model_parallel_size = None
   pretrain.trainer.strategy.expert_tensor_parallel_size = 1
-
+  #DATA parallism
+  pretrain.trainer.strategy.data_parallel_shard_degree=-1
+  #pretrain.trainer.max_steps = 500
+  
   # Disable checkpointing.
   pretrain.log.ckpt = None
   pretrain.trainer.enable_checkpointing = False
