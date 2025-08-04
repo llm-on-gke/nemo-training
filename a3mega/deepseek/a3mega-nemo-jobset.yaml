@@ -138,7 +138,7 @@ spec:
               - name: MASTER_PORT
                 value: "3389"
               - name: MAX_STEPS
-                value: "500"
+                value: "20"
               - name: NNODES
                 value: "32"
               - name: GPUS_PER_NODE
@@ -150,9 +150,9 @@ spec:
               - name: EXPERIMENT_NAME
                 value: "nemo-experiments"
               - name: EXPERIMENT_ROOT_DIR
-                value: "/localssd/"
+                value: "/gcs-dir/"
               - name: EXPLICIT_LOG_DIR
-                value: "/localssd/nemo-logs"
+                value: "/gcs-dir/nemo-logs"
               - name: NVTE_FWD_LAYERNORM_SM_MARGIN
                 value: "8"
               - name: NVTE_BWD_LAYERNORM_SM_MARGIN
