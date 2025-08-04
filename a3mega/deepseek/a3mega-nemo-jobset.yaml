@@ -98,7 +98,7 @@ spec:
             containers:
             - name: pytorch
               image: nvcr.io/nvidia/nemo:25.07 
-              imagePullPolicy: Always
+              imagePullPolicy: IfNotPresent
               # image: gcr.io/k8s-staging-jobset/pytorch-mnist:latest
               ports:
               - containerPort: 3389
@@ -138,7 +138,7 @@ spec:
               - name: MASTER_PORT
                 value: "3389"
               - name: MAX_STEPS
-                value: "50"
+                value: "500"
               - name: NNODES
                 value: "32"
               - name: GPUS_PER_NODE
@@ -162,7 +162,9 @@ spec:
               - name: TOKENIZER_PATH
                 value: "/artifacts/third-party/tokenizers/gpt2"
               - name: NEMO_LAUNCH_SCRIPT
-                value: /gcs-dir/nemo-configs/deepseek-v3.py
+                #value: /gcs-dir/nemo-configs/deepseek-v3.py
+                value: /gcs-dir/nemo-configs/llama3-405b.py
+              
   # Force python to not buffer output and write directly to stdout, so we can view training logs via `kubectl logs`.
               - name: PYTHONUNBUFFERED
                 value: "0"
