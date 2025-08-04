@@ -7,9 +7,9 @@ from nemo.lightning.pytorch.callbacks.flops_callback import FLOPsMeasurementCall
 
 import nemo_run as run
 def recipe(
-    profile_enabled: bool = True,
-    profile_start_step: int = 2,
-    profile_end_step: int = 5,
+    profile_enabled: bool = False,
+    profile_start_step: int = 0,
+    profile_end_step: int = 0,
     profile_ranks: str = "0",
 ) -> run.Partial:
   """Returns a Nemo2 training recipe for Deepseek v3 model.
@@ -64,7 +64,7 @@ def recipe(
   pretrain.trainer.strategy.expert_tensor_parallel_size = 1
   
   #DATA parallism
-  #pretrain.trainer.strategy.data_parallel_shard_degree=-1
+  pretrain.trainer.strategy.data_parallel_shard_degree=-1
   
   # Disable checkpointing.
   pretrain.log.ckpt = None
