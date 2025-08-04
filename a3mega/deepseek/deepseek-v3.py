@@ -7,7 +7,7 @@ from nemo.lightning.pytorch.callbacks.flops_callback import FLOPsMeasurementCall
 
 import nemo_run as run
 def recipe(
-    profile_enabled: bool = False,
+    profile_enabled: bool = True,
     profile_start_step: int = 0,
     profile_end_step: int = 0,
     profile_ranks: str = "0",
