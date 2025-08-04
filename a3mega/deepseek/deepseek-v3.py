@@ -8,8 +8,8 @@ from nemo.lightning.pytorch.callbacks.flops_callback import FLOPsMeasurementCall
 import nemo_run as run
 def recipe(
     profile_enabled: bool = True,
-    profile_start_step: int = 0,
-    profile_end_step: int = 0,
+    profile_start_step: int = 2,
+    profile_end_step: int = 5,
     profile_ranks: str = "0",
 ) -> run.Partial:
   """Returns a Nemo2 training recipe for Deepseek v3 model.
