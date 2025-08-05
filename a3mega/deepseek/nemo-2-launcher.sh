@@ -19,8 +19,8 @@ echo "Launching Torch distributed on the node rank $JOB_COMPLETION_INDEX out of 
 
 
 # Update nemo run so we can export the config.
-pip install git+https://github.com/NVIDIA/NeMo-Run.git@6550ff68204e5095452098eed3765ed765de5d33
-
+#pip install git+https://github.com/NVIDIA/NeMo-Run.git@6550ff68204e5095452098eed3765ed765de5d33
+pip install git+https://github.com/NVIDIA/NeMo-Run.git
 # Export the nemo2 config to yaml.
 python ${NEMO_LAUNCH_SCRIPT} --factory "recipe()" \
 trainer.num_nodes="$NNODES" \

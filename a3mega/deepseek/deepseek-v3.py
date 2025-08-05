@@ -4,6 +4,8 @@ from nemo.collections import llm
 from nemo.collections.llm.recipes import deepseek_v3
 from nemo.lightning.pytorch.callbacks import NsysCallback
 from nemo.lightning.pytorch.callbacks.flops_callback import FLOPsMeasurementCallback
+from nemo.lightning.pytorch.callbacks.megatron_comm_overlap import MegatronCommOverlapCallback
+from nemo.collections.llm.gpt.data.mock import MockDataModule
 
 import nemo_run as run
 def recipe(
@@ -50,21 +52,41 @@ def recipe(
           FLOPsMeasurementCallback,
           model_name="deepseekv3",
           model_config=pretrain.model.config,
-          data_config=pretrain.data,
+          
+          data_config=pretrain.data, #MockDataModule(seq_length=4096, micro_batch_size=2,global_batch_size=2048) ,
       )
   )
+
+  pretrain.trainer.callbacks.append(
+      run.Config(
+        MegatronCommOverlapCallback, 
+        tp_comm_overlap=False,
+      )
+  )
+  #add FLOPS Measurement callback
+  pretrain.model.config.mtp_num_layers=61
+  #pretrain.data=MockDataModule(seq_length=4096, micro_batch_size=2,global_batch_size=2048) 
   
   #Recipe 2 layer:
   #pretrain.model.config.num_layers = 2
   #pretrain.model.config.moe_layer_freq = [0, 1]
-  pretrain.trainer.strategy.pipeline_model_parallel_size = 1
+  
+  
+  #TP=2 , PP=16 , EP=64, VP=1, ETP=1, AOL=0, GBS=nodesx8x8-2048
+
+  pretrain.trainer.strategy.pipeline_model_parallel_size =1
   pretrain.trainer.strategy.tensor_model_parallel_size=8
   pretrain.trainer.strategy.expert_model_parallel_size = 8 
-  #retrain.trainer.strategy.virtual_pipeline_model_parallel_size = None
-  pretrain.trainer.strategy.expert_tensor_parallel_size = 1
+  pretrain.trainer.strategy.virtual_pipeline_model_parallel_size =1
+  pretrain.trainer.strategy.expert_tensor_parallel_size = 1 
+  pretrain.trainer.strategy.activation_offload_layers=0
+  pretrain.trainer.strategy.pipeline_parallel_schedule = "Interleaved1F1B"
+  #pretrain.trainer.strategy.virtual_pipeline_model_parallel_size = 1
+  #pretrain.trainer.strategy.expert_tensor_parallel_size = 1
   
   #DATA parallism
-  pretrain.trainer.strategy.data_parallel_shard_degree=-1
+  #pretrain.trainer.strategy.data_parallel_shard_size=-1
+
   
   # Disable checkpointing.
   pretrain.log.ckpt = None
