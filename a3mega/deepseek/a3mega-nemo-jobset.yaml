@@ -190,7 +190,10 @@ spec:
               - |
                 NCCL_LIB_DIR="/usr/local/nvidia/lib64"
                 source ${NCCL_LIB_DIR}/nccl-env-profile.sh
-                NCCL_DEBUG="WARN"
+                ldconfig /usr/local/nvidia/lib64/
+                echo "Added /usr/local/nvidia/lib64/ to ldconfig:"
+                ldconfig -p | grep libcuda | sed 's/^/  /'
+                NCCL_DEBUG="INFO"
                 #sleep infinity
                 mkdir /tb_boards
                 bash /gcs-dir/nemo-configs/nemo-2-launcher.sh

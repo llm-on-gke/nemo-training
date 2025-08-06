@@ -10,7 +10,7 @@ from nemo.collections.nlp.modules.common.tokenizer_utils import get_nmt_tokenize
 
 import nemo_run as run
 def recipe(
-    profile_enabled: bool = True,
+    profile_enabled: bool = False,
     profile_start_step: int = 5,
     profile_end_step: int = 7,
     profile_ranks: str = "0",
@@ -79,10 +79,9 @@ def recipe(
   
   #TP=2 , PP=16 , EP=64, VP=1, ETP=1, AOL=0, GBS=nodesx8x8-2048
   #Nvidia pretrain_deepseek_v3_bf16_32nodes_tp2_pp4_cp1_vp1_ep32_1mbs_1024gbs_386556
-
-  pretrain.trainer.strategy.pipeline_model_parallel_size =4
-  pretrain.trainer.strategy.tensor_model_parallel_size=2
-  pretrain.trainer.strategy.expert_model_parallel_size = 32
+  pretrain.trainer.strategy.pipeline_model_parallel_size =16
+  pretrain.trainer.strategy.tensor_model_parallel_size=8
+  pretrain.trainer.strategy.expert_model_parallel_size = 16 #can not higher than 16
   pretrain.trainer.strategy.virtual_pipeline_model_parallel_size =None
   pretrain.trainer.strategy.expert_tensor_parallel_size = 1 
   pretrain.trainer.strategy.activation_offload_layers=0
