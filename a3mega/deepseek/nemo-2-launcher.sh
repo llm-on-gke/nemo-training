@@ -10,18 +10,20 @@ else
   explicit_log_dir=${ARTIFACT_DIR}
 fi
 echo "Logging to ${explicit_log_dir}"
-if [[ -n "${TOKENIZER_PATH}" ]]; then
-  echo "Getting tokenizer files"
-  cp ${TOKENIZER_PATH}/* .
-  echo ""
-fi
+
+
+#if [[ -n "${TOKENIZER_PATH}" ]]; then
+#  echo "Getting tokenizer files"
+#  cp ${TOKENIZER_PATH}/* .
+#  echo ""
+#fi
 echo "Launching Torch distributed on the node rank $JOB_COMPLETION_INDEX out of $NNODES nodes"
 
+#python ${TOKENIZER_PATH}/download_tokenizer.py --repo_id deepseek-ai/DeepSeek-V3 --local_dir . 
 
-# Update nemo run so we can export the config.
-#pip install git+https://github.com/NVIDIA/NeMo-Run.git@6550ff68204e5095452098eed3765ed765de5d33
-pip install git+https://github.com/NVIDIA/NeMo-Run.git
-# Export the nemo2 config to yaml.
+wget https://s3.amazonaws.com/models.huggingface.co/bert/gpt2-vocab.json &&\
+wget https://s3.amazonaws.com/models.huggingface.co/bert/gpt2-merges.txt
+
 python ${NEMO_LAUNCH_SCRIPT} --factory "recipe()" \
 trainer.num_nodes="$NNODES" \
 log.explicit_log_dir="${explicit_log_dir}" \

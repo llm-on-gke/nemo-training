@@ -3,7 +3,7 @@
 apiVersion: jobset.x-k8s.io/v1alpha2
 kind: JobSet
 metadata:
-  name: nemo
+  name: deepseek
   labels:
       kueue.x-k8s.io/queue-name: a3-mega
   #annotations:
@@ -97,7 +97,7 @@ spec:
                   value: /usr/local/nvidia/lib64
             containers:
             - name: pytorch
-              image: nvcr.io/nvidia/nemo:25.07 
+              image: nvcr.io/nvidia/nemo:25.07
               imagePullPolicy: IfNotPresent
               # image: gcr.io/k8s-staging-jobset/pytorch-mnist:latest
               ports:
@@ -134,7 +134,7 @@ spec:
                   fieldRef:
                     fieldPath: metadata.annotations['jobset.sigs.k8s.io/jobset-name']
               - name: MASTER_ADDR
-                value: "nemo-workload-0-0.nemo.default.svc.cluster.local"
+                value: "deepseek-workload-0-0.deepseek.default.svc.cluster.local"
               - name: MASTER_PORT
                 value: "3389"
               - name: MAX_STEPS
@@ -157,10 +157,13 @@ spec:
                 value: "8"
               - name: NVTE_BWD_LAYERNORM_SM_MARGIN
                 value: "8"
+              - name: CUDA_DEVICE_MAX_CONNECTIONS
+                value: "1"
+              
               - name: GLOO_SOCKET_IFNAME
                 value: "eth0"
               - name: TOKENIZER_PATH
-                value: "/gcs-dir/nemo-tokenizer"
+                value: "/gcs-dir/nemo-configs"
               - name: NEMO_LAUNCH_SCRIPT
                 value: /gcs-dir/nemo-configs/deepseek-v3.py
                 #value: /gcs-dir/nemo-configs/llama3-405b.py
@@ -171,7 +174,7 @@ spec:
               #- name: NCCL_DEBUG
               #  value: "VERSION"
               #- name: NCCL_ALGO
-              #  value: "Ring,Tree"cd 
+              #  value: "Ring,Tree" 
               #- name: NCCL_MIN_NCHANNELS
               # value: "4"
               - name: LD_LIBRARY_PATH
@@ -187,7 +190,7 @@ spec:
               - |
                 NCCL_LIB_DIR="/usr/local/nvidia/lib64"
                 source ${NCCL_LIB_DIR}/nccl-env-profile.sh
-                #NCCL_DEBUG="INFO"
+                NCCL_DEBUG="WARN"
                 #sleep infinity
                 mkdir /tb_boards
                 bash /gcs-dir/nemo-configs/nemo-2-launcher.sh
