@@ -53,6 +53,11 @@ spec:
             - name: local-ssd
               hostPath:
                 path: /mnt/stateful_partition/kube-ephemeral-ssd
+            - name: var-lib
+              hostPath:
+                path: /var/lib
+            - name: nccl-plugin-volume
+              emptyDir: {}
 
             - name: gcs-fuse-csi-ephemeral
               csi:
@@ -94,7 +99,30 @@ spec:
                  mountPath: /hostprocsysfs
               env:
                 - name: LD_LIBRARY_PATH
-                  value: /usr/local/nvidia/lib64
+                  value: "/usr/local/nvidia/lib64"
+            - name: nccl-tcpxo-installer
+              image: us-docker.pkg.dev/gce-ai-infra/gpudirect-tcpxo/nccl-plugin-gpudirecttcpx-dev:v1.0.11
+              securityContext:
+                privileged: true
+              volumeMounts:
+              - name: var-lib
+                mountPath: /var/lib
+              - name: libraries
+                mountPath: /usr/local/nvidia
+              - name: nccl-plugin-volume
+                mountPath: /usr/local/nccl-plugin
+              command: ["/bin/sh", "-c"]
+              args:
+               - |
+                 set -ex
+                 chmod 755 /scripts/container_entry.sh
+                 /scripts/container_entry.sh install --install-nccl --nccl-buildtype=223
+                 cp -r /var/lib/tcpxo/* /usr/local/nccl-plugin/
+                 echo "Installed NCCL plugin to pod-wide, shared NCCL plug-in volume"
+                 echo "Contents (mounted at /usr/local/nccl-plugin/lib64):"
+                 ls /usr/local/nccl-plugin/lib64 | sed 's/^/  /'
+                 echo "Contents (mounted at /usr/local/nccl-plugin/):"
+                 ls /usr/local/nccl-plugin/ | sed 's/^/  /'
             containers:
             - name: pytorch
               image: nvcr.io/nvidia/nemo:25.07
@@ -177,23 +205,42 @@ spec:
               #  value: "Ring,Tree" 
               #- name: NCCL_MIN_NCHANNELS
               # value: "4"
-              - name: LD_LIBRARY_PATH
-                value: /usr/local/nvidia/lib64
+              #- name: LD_LIBRARY_PATH
+              #  value: /usr/local/nvidia/lib64
+              #- name: NCCL_NET_PLUGIN
+              #  value: /usr/local/nvidia/lib64
+              - name: NCCL_LIB_DIR
+                value: /usr/local/nccl-plugin/lib64
+              - name: NCCL_PLUGIN_PATHTR
+                value: /usr/local/nccl-plugin/lib64 #:/usr/local/nvidia/lib64
+              - name: NCCL_INIT_SCRIPT                   
+                value: /usr/local/nccl-plugin/lib64/nccl-env-profile.sh
               - name: NCCL_FASTRAK_LLCM_DEVICE_DIRECTORY
-                value: /dev/aperture_devices
+                value: "/dev/aperture_devices"
+
               
               securityContext:
-                #privileged: true
+                privileged: true
               command:
               - bash
               - -xc
               - |
-                NCCL_LIB_DIR="/usr/local/nvidia/lib64"
-                source ${NCCL_LIB_DIR}/nccl-env-profile.sh
-                ldconfig /usr/local/nvidia/lib64/
-                echo "Added /usr/local/nvidia/lib64/ to ldconfig:"
+                trap "" SIGPROF
+                echo "Pod on $(hostname --fqdn) is running"
+                echo "Pod is assigned job index of $JOB_COMPLETION_INDEX"
+      
+                if [[ -n "${NCCL_INIT_SCRIPT}" ]]; then
+                   echo "Running NCCL init script: ${NCCL_INIT_SCRIPT}"
+                   source ${NCCL_INIT_SCRIPT}
+                fi
+                
+                export LD_LIBRARY_PATH="$NCCL_PLUGIN_PATH"
+                ldconfig $LD_LIBRARY_PATH
+                echo "Added $LD_LIBRARY_PATH to ldconfig:"
                 ldconfig -p | grep libcuda | sed 's/^/  /'
-                NCCL_DEBUG="INFO"
+                echo ""
+
+                #NCCL_DEBUG="INFO"
                 #sleep infinity
                 mkdir /tb_boards
                 bash /gcs-dir/nemo-configs/nemo-2-launcher.sh
@@ -214,6 +261,8 @@ spec:
                  mountPath: /dev/aperture_devices
                - name: libraries
                  mountPath: /usr/local/nvidia
+               - name: nccl-plugin-volume
+                 mountPath: /usr/local/nccl-plugin
                - mountPath: /dev/shm
                  name: dshm
                - mountPath: /gcs-dir

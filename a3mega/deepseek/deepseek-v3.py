@@ -4,7 +4,9 @@ from nemo.collections import llm
 from nemo.collections.llm.recipes import deepseek_v3
 from nemo.lightning.pytorch.callbacks import NsysCallback
 from nemo.lightning.pytorch.callbacks.flops_callback import FLOPsMeasurementCallback
+from nemo.lightning.pytorch.callbacks.garbage_collection import GarbageCollectionCallback
 from nemo.lightning.pytorch.callbacks.megatron_comm_overlap import MegatronCommOverlapCallback
+from nemo.utils.exp_manager import TimingCallback
 from nemo.collections.llm.gpt.data.mock import MockDataModule
 from nemo.collections.nlp.modules.common.tokenizer_utils import get_nmt_tokenizer
 
@@ -36,8 +38,9 @@ def recipe(
     merges_file="gpt2-merges.txt",
   )
   pretrain.data.tokenizer=tokenizer
-  pretrain.data.global_batch_size=1024
+  pretrain.data.global_batch_size=2048
   
+  pretrain.trainer.callbacks=[]
   # Set the number of steps to 50 for a quicker benchmark.
   #pretrain.trainer.max_steps = 50
   # Disable validation batches.
@@ -66,7 +69,29 @@ def recipe(
           data_config=pretrain.data, #MockDataModule(seq_length=4096, micro_batch_size=2,global_batch_size=1024) ,
       )
   )
+  pretrain.trainer.callbacks.append(
+      run.Config(
+        MegatronCommOverlapCallback, 
+        tp_comm_overlap=False,
+      )
+  )
 
+  pretrain.trainer.callbacks.append(
+      run.Config(
+        GarbageCollectionCallback,
+        gc_interval_train=5,
+        gc_interval_val=5,
+    )
+  )
+  
+  pretrain.trainer.callbacks.append(
+      run.Config(TimingCallback)
+  )
+
+  
+  #for idx, callback in enumerate(recipe.trainer.callbacks):
+  #      if isinstance(callback, DeepEPCallback):
+              
 
   #add FLOPS Measurement callback
   #pretrain.model.config.mtp_num_layers=None
