@@ -38,7 +38,7 @@ def recipe(
     merges_file="gpt2-merges.txt",
   )
   pretrain.data.tokenizer=tokenizer
-  pretrain.data.global_batch_size=2048
+  pretrain.data.global_batch_size= 1024
   
   pretrain.trainer.callbacks=[]
   # Set the number of steps to 50 for a quicker benchmark.
@@ -58,6 +58,11 @@ def recipe(
             gen_shape=False,
         )
     )
+
+  pretrain.trainer.callbacks.append(
+      run.Config(TimingCallback
+      )
+  )
 
   # Add the FLOPs measurement callback.
   pretrain.trainer.callbacks.append(
@@ -84,9 +89,6 @@ def recipe(
     )
   )
   
-  pretrain.trainer.callbacks.append(
-      run.Config(TimingCallback)
-  )
 
   
   #for idx, callback in enumerate(recipe.trainer.callbacks):
@@ -104,10 +106,10 @@ def recipe(
   
   #TP=2 , PP=16 , EP=64, VP=1, ETP=1, AOL=0, GBS=nodesx8x8-2048
   #Nvidia pretrain_deepseek_v3_bf16_32nodes_tp2_pp4_cp1_vp1_ep32_1mbs_1024gbs_386556
-  pretrain.trainer.strategy.pipeline_model_parallel_size =16
-  pretrain.trainer.strategy.tensor_model_parallel_size=8
+  pretrain.trainer.strategy.pipeline_model_parallel_size =2
+  pretrain.trainer.strategy.tensor_model_parallel_size=2
   pretrain.trainer.strategy.expert_model_parallel_size = 16 #can not higher than 16
-  pretrain.trainer.strategy.virtual_pipeline_model_parallel_size =None
+  #pretrain.trainer.strategy.virtual_pipeline_model_parallel_size =None
   pretrain.trainer.strategy.expert_tensor_parallel_size = 1 
   pretrain.trainer.strategy.activation_offload_layers=0
   #pretrain.trainer.strategy.pipeline_parallel_schedule = "Interleaved1F1B"
