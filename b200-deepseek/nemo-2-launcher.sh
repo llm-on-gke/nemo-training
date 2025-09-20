@@ -32,7 +32,7 @@ pip install '.[all]'
 python ${NEMO_LAUNCH_SCRIPT} --factory "recipe()" \
 trainer.num_nodes="$NNODES" \
 log.explicit_log_dir="${explicit_log_dir}" \
-trainer.max_steps=10 trainer.num_nodes=4 trainer.devices=8 trainer.strategy.tensor_model_parallel_size=1 trainer.strategy.expert_model_parallel_size=8 data.global_batch_size=128 \
+trainer.max_steps=10 trainer.devices=8 trainer.strategy.tensor_model_parallel_size=1 trainer.strategy.expert_model_parallel_size=8 data.global_batch_size=2048 \
 --to-yaml exported_nemo_config.yaml
 
 # Create the nsys directory.
