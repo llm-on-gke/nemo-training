@@ -28,7 +28,7 @@ from nemo.collections.llm.recipes.llama3_8b import MegatronCommOverlapCallback
 from nemo.lightning.base import DEFAULT_NEMO_CACHE_HOME
 from nemo.utils import logging
 
-DEFAULT_NEMO_HOME = os.getenv('NEMO_HOME', /home/nemo)
+DEFAULT_NEMO_HOME = os.getenv('NEMO_HOME', '/home/nemo-training')
 
 
 def hf_tokenizer(model_name: str) -> run.Config[AutoTokenizer]:
