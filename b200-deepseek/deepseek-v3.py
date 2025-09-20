@@ -92,7 +92,7 @@ def recipe(
 
   pretrain = override_recipe_configs(
         pretrain,
-        $NNODES,
+        32,
         1, #mbs
         2048, #gbs
         2, #TP
