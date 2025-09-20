@@ -495,10 +495,10 @@ def set_primary_perf_configs(
             logging.warning("use_transformer_engine_op_fuser is not supported for this version of MCORE.")
 
     # te activation function for MLP part
-    recipe.model.config.use_te_activation_func = use_te_act_func or False
-    assert (
-        not act_func_fp8_input_store
-    ) or use_te_act_func, "act_func_fp8_input_store requires use_te_act_func to be True"
+    #recipe.model.config.use_te_activation_func = use_te_act_func or False
+    #assert (
+    #    not act_func_fp8_input_store
+    #) or use_te_act_func, "act_func_fp8_input_store requires use_te_act_func to be True"
     recipe.model.config.activation_func_fp8_input_store = act_func_fp8_input_store or False
 
     recipe = set_perf_optimization_configs(
