@@ -101,7 +101,7 @@ def recipe(
         1,
         8,
         1,
-        bf16_with_fp8_subchannel_scaling_mixed,
+        False,
         False,
         0,
         0,

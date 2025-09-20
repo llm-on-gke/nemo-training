@@ -24,8 +24,8 @@ from nemo.collections.llm.gpt.data.mock import MockDataModule
 from nemo.collections.llm.recipes.precision.mixed_precision import (
     bf16_with_fp8_current_scaling_mixed,
     bf16_with_fp8_mixed,
-    bf16_with_fp8_subchannel_scaling_mixed,
     bf16_with_mxfp8_mixed,
+    bf16_with_fp8_subchannel_scaling_mixed,
 )
 from nemo.lightning.pytorch.callbacks.flops_callback import FLOPsMeasurementCallback
 from nemo.lightning.pytorch.callbacks.model_checkpoint import ModelCheckpoint
