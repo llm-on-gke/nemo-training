@@ -1,0 +1,186 @@
+# Distributed training of a traditional CNN model to do image classification 
+# using the MNIST dataset and PyTorch.
+apiVersion: jobset.x-k8s.io/v1alpha2
+kind: JobSet
+metadata:
+  name: pytorch
+  #annotations:
+  # kueue.x-k8s.io/queue-name: a3-ultra
+spec:
+  network:
+    enableDNSHostnames: true
+  replicatedJobs:
+  - name: workers
+    template:
+      spec:
+        parallelism: 32
+        completions: 32
+        #suspend: true
+        backoffLimit: 0
+        template:
+          metadata:
+            annotations:
+              #kueue.x-k8s.io/podset-preferred-topology: "kubernetes.io/hostname"
+              gke-gcsfuse/volumes: "true"
+              networking.gke.io/default-interface: 'eth0'
+              networking.gke.io/interfaces: |
+               [
+                {"interfaceName":"eth0","network":"default"},
+                {"interfaceName":"eth1","network":"gvnic-1"},
+                {"interfaceName":"eth2","network":"rdma-0"},
+                {"interfaceName":"eth3","network":"rdma-1"},
+                {"interfaceName":"eth4","network":"rdma-2"},
+                {"interfaceName":"eth5","network":"rdma-3"},
+                {"interfaceName":"eth6","network":"rdma-4"},
+                {"interfaceName":"eth7","network":"rdma-5"},
+                {"interfaceName":"eth8","network":"rdma-6"},
+                {"interfaceName":"eth9","network":"rdma-7"}
+               ]
+          spec:
+            #restartPolicy: Never # dws
+            #hostNetwork: true
+            
+            #dnsPolicy: ClusterFirstWithHostNet
+            nodeSelector:
+               #cloud.google.com/gke-nodepool: dws-a3-mega #dws
+               cloud.google.com/gke-accelerator: nvidia-b200 #non dws
+            tolerations:
+               - key: "nvidia.com/gpu"
+                 operator: "Exists"
+                 effect: "NoSchedule"
+            restartPolicy: Never
+            serviceAccountName: storage-access
+            volumes:
+            - name: gcs-fuse-csi-ephemeral
+              csi:
+                driver: gcsfuse.csi.storage.gke.io
+                readOnly: false
+                volumeAttributes:
+                   bucketName: rick-nemo-factory
+                   mountOptions: "implicit-dirs"
+                   fileCacheCapacity: "-1Mi"
+                   fileCacheForRangeRead: "true"
+                   metadataCacheTTLSeconds: "-1"
+                   metadataNegativeCacheTTLSeconds: "0"
+                   metadataStatCacheCapacity: "-1Mi"
+                   metadataTypeCacheCapacity: "-1Mi"
+            - name: library-dir-host
+              hostPath:
+                path: /home/kubernetes/bin/nvidia
+            - name: gib
+              hostPath:
+                path: /home/kubernetes/bin/gib
+            - name: data
+              emptyDir: {}
+            - name: hf-cache
+              emptyDir: {}
+            - name: model-cache
+              emptyDir: {}
+            - name: output
+              emptyDir: {}
+            - name: dshm
+              emptyDir:
+                medium: Memory
+
+            containers:
+            - name: pytorch
+              image: nvcr.io/nvidia/nemo:25.07
+              imagePullPolicy: Always
+              # image: gcr.io/k8s-staging-jobset/pytorch-mnist:latest
+              ports:
+              - containerPort: 3389
+              env:
+              - name: HF_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: huggingface
+                    key: HF_TOKEN
+              - name: HUGGING_FACE_HUB_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                     name: huggingface
+                     key: HF_TOKEN
+              - name: MASTER_ADDR
+                value: "pytorch-workers-0-0.pytorch.default.svc.cluster.local"
+              - name: MASTER_PORT
+                value: "3389"
+              - name: NNODES
+                value: "32"
+              - name: NODE_RANK
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.annotations['batch.kubernetes.io/job-completion-index']
+              # Force python to not buffer output and write directly to stdout, so we can view training logs via `kubectl logs`.
+              - name: GPUS_PER_NODE
+                value: "8"
+              - name: EXPERIMENT_NAME
+                value: "nemo-experiments"
+              - name: EXPERIMENT_ROOT_DIR
+                value: "/gcs-dir/"
+              - name: EXPLICIT_LOG_DIR
+                value: "/gcs-dir/nemo-logs"
+              - name: NEMO_LAUNCH_SCRIPT
+                value: /home/nemo-training/deepseek-v3.py 
+              - name: NCCL_PLUGIN_PATH
+                value: /usr/local/nvidia/lib64 #/usr/local/nccl-plugin/lib64 #:
+              - name: NCCL_INIT_SCRIPT                   
+                value: /usr/local/gib/scripts/set_nccl_env.sh
+              - name: PYTHONUNBUFFERED
+                value: "0"
+              #- name: LD_LIBRARY_PATH
+              #  value: /usr/local/nvidia/lib64
+              - name: FP8_RECIPE
+                value: mxfp8
+              - name: JOB_IDENTIFIER
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.annotations['jobset.sigs.k8s.io/jobset-name']
+              - name: NVTE_FWD_LAYERNORM_SM_MARGIN
+                value: "8"
+              - name: NVTE_BWD_LAYERNORM_SM_MARGIN
+                value: "8"
+              - name: GLOO_SOCKET_IFNAME
+                value: "eth0"
+              - name: TORCH_DISTRIBUTED_TRACING
+                value: "ALL"
+              - name: NCCL_LOG
+                value: "DEBUG"
+              securityContext:
+                privileged: true
+              command:
+              - bash
+              - -xc
+              - |            
+                trap "" SIGPROF
+                echo "Pod on $(hostname --fqdn) is running"
+                echo "Pod is assigned job index of $JOB_COMPLETION_INDEX"
+                cd /home
+                git clone https://github.com/llm-on-gke/nemo-training
+                cd nemo-training
+                bash nemo-2-launcher.sh
+
+              resources:
+                requests:
+                  nvidia.com/gpu: 8
+                limits:
+                  nvidia.com/gpu: 8
+              volumeMounts:
+               - name: library-dir-host
+                 mountPath: /usr/local/nvidia
+               - name: gib
+                 mountPath: /usr/local/gib
+               - name: dshm
+                 mountPath: /dev/shm
+               - name: data
+                 mountPath: /data
+               - name: hf-cache
+                 mountPath: /root/.cache/huggingface
+               - name: model-cache
+                 mountPath: /root/.cache/modelscope
+               - name: output
+                 mountPath: /app/output
+               - name: gcs-fuse-csi-ephemeral
+                 mountPath: /gcs-dir
+               
+               
+           
