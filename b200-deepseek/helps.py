@@ -31,7 +31,7 @@ from nemo.lightning.pytorch.callbacks.flops_callback import FLOPsMeasurementCall
 from nemo.lightning.pytorch.callbacks.model_checkpoint import ModelCheckpoint
 from nemo.utils import logging
 
-from .utils import get_comm_overlap_callback_idx
+from utils import get_comm_overlap_callback_idx
 
 
 def get_csv_configs(gpu: str, task: str, model_name: str, model_size: str, args) -> pd.DataFrame:

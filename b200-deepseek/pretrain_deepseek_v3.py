@@ -23,16 +23,16 @@ from nemo.lightning.pytorch.callbacks.megatron_enable_experimental_callback impo
 from nemo.lightning.pytorch.callbacks.moe_token_drop import MegatronTokenDropCallback
 from nemo.lightning.run.plugins import MemoryProfilePlugin, NsysPlugin
 
-from ..argument_parser import parse_additional_slurm_params, parse_cli_args
+from argument_parser import parse_additional_slurm_params, parse_cli_args
 #from ..executors import slurm_executor
-from .helpers import (
+from helpers import (
     args_sanity_check,
     build_perf_env_plugin,
     get_user_configs,
     set_exp_logging_configs,
     set_primary_perf_configs,
 )
-from .utils import dump_config_diff_from_base_recipe, hf_tokenizer
+from utils import dump_config_diff_from_base_recipe, hf_tokenizer
 
 HF_MODEL_URI = "deepseek-ai/DeepSeek-V3-Base"
 USE_TOKEN_DROP = True  # Use token drop callback
