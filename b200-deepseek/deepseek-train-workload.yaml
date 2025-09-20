@@ -13,8 +13,8 @@ spec:
   - name: workers
     template:
       spec:
-        parallelism: 2
-        completions: 2
+        parallelism: 32
+        completions: 32
         #suspend: true
         backoffLimit: 0
         template:
@@ -105,7 +105,7 @@ spec:
               - name: MASTER_PORT
                 value: "3389"
               - name: NNODES
-                value: "2"
+                value: "32"
               - name: NODE_RANK
                 valueFrom:
                   fieldRef:
