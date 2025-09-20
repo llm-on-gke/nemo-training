@@ -5,6 +5,8 @@ from nemo.collections.llm.recipes import deepseek_v3
 from nemo.lightning.pytorch.callbacks import NsysCallback
 from nemo.lightning.pytorch.callbacks.flops_callback import FLOPsMeasurementCallback
 from nemo.collections.llm.recipes.precision.mixed_precision import bf16_with_fp8_mixed
+
+from .pretrain_deepseek_v3 import override_recipe_configs
 import nemo_run as run
 
 
@@ -68,6 +70,45 @@ def recipe(
 
   # Log every step.
   pretrain.trainer.log_every_n_steps = 1
+
+  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] num_nodes=32
+  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] num_gpus_per_node=8
+  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] mbs=1
+  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] gbs=2048
+  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] tp_size=2
+  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] pp_size=16
+  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] cp_size=1
+  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] vp_size=1
+  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] ep_size=8
+  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] etp_size=1
+  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] enable_cuda_graphs=True
+  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] use_mcore_fsdp=False
+  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] recompute_layers=0
+  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] activation_offload_layers=0
+  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] recompute_modules=None
+  #[NeMo I 2025-09-19 17:03:27 nemo_logging:393] keep_fsdp_fp8_transpose_cache=False
+  #[NeMo I 2025-09-19 17:03:27 nemo_logging:393] use_user_buffer_registration=False
+  #[NeMo I 2025-09-19 17:03:27 nemo_logging:393] use_sharp=False
+
+  pretrain = override_recipe_configs(
+        pretrain,
+        $NNODES,
+        1, #mbs
+        2048, #gbs
+        2, #TP
+        16,
+        1,
+        1,
+        8,
+        1,
+        True,
+        False,
+        0,
+        0,
+        None,
+        False,
+        False,
+    )
 
   return pretrain
 
