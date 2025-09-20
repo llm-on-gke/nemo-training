@@ -61,7 +61,7 @@ def recipe(
   pretrain.log.ckpt = None
   pretrain.trainer.enable_checkpointing = False
 
-  pretrain.trainer.plugins = bf16_with_fp8_mixed()
+  #pretrain.trainer.plugins = bf16_with_fp8_mixed()
   pretrain.trainer.strategy.pipeline_model_parallel_size = 16
   pretrain.trainer.strategy.tensor_model_parallel_size = 1
   pretrain.trainer.strategy.expert_model_parallel_size = 8
@@ -101,7 +101,7 @@ def recipe(
         1,
         8,
         1,
-        False,
+        True,
         False,
         0,
         0,
