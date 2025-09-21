@@ -35,7 +35,7 @@ from helpers import (
 from utils import dump_config_diff_from_base_recipe, hf_tokenizer
 
 HF_MODEL_URI = "deepseek-ai/DeepSeek-V3-Base"
-USE_TOKEN_DROP = True  # Use token drop callback
+USE_TOKEN_DROP = False  # Use token drop callback
 
 
 def override_recipe_configs(
@@ -82,7 +82,7 @@ def override_recipe_configs(
       recipe.model.config.moe_token_dispatcher_type = "flex"
       recipe.model.config.moe_enable_deepep = True
       recipe.model.config.moe_shared_expert_overlap = False  # not supported for deepEP
-      #recipe.model.config.moe_expert_capacity_factor=None #rick
+      recipe.model.config.moe_expert_capacity_factor=None #rick
     #     use force load balance for reducing variance in benchmarking
       recipe.model.config.moe_router_force_load_balancing = True
     else:

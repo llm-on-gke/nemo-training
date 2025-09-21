@@ -91,7 +91,7 @@ def recipe(
         False, #use_sharp
         True, #enable deepep
     )
-  pretrainn.model.config.moe_expert_capacity_factor=None #rick
+  pretrain.model.config.moe_expert_capacity_factor=None #rick
   return pretrain
 
 
