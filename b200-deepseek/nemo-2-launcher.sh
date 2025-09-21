@@ -26,7 +26,7 @@ git clone https://github.com/NVIDIA/NeMo
 cd NeMo
 git checkout r2.4.0
 pip install '.[all]'
-#pip install megatron-core@git+https://github.com/NVIDIA/Megatron-LM.git@core_r0.13.0
+pip install megatron-core@git+https://github.com/NVIDIA/Megatron-LM.git@core_r0.13.0
 #pip install nemo_run@git+https://github.com/NVIDIA/NeMo-Run.git
 # Export the nemo2 config to yaml.
 python ${NEMO_LAUNCH_SCRIPT} --factory "recipe()" \
