@@ -144,7 +144,7 @@ def override_recipe_configs(
         recompute_layers=recompute_layers,
         activation_offload_layers=activation_offload_layers,
         compute_dtype="fp8",
-        fp8_recipe="ds",
+        fp8_recipe="cs",
         recompute_modules=recompute_modules,
         use_te_act_func=None,
         act_func_fp8_input_store=None,
