@@ -55,7 +55,7 @@ torchrun \
 ${NEMO_LAUNCH_SCRIPT} --factory "recipe()" \
 trainer.num_nodes="$NNODES" \
 log.explicit_log_dir="${explicit_log_dir}" \
-trainer.max_steps=10 trainer.num_nodes=${NNODES} trainer.devices=8 trainer.strategy.tensor_model_parallel_size=1 trainer.strategy.expert_model_parallel_size=8 data.global_batch_size=2048
+trainer.max_steps=10 trainer.num_nodes=${NNODES} trainer.devices=8 trainer.strategy.expert_model_parallel_size=8 data.global_batch_size=2048
 
 if [[ "$JOB_COMPLETION_INDEX" == "0" ]]; then
   mkdir -p ${ARTIFACT_DIR}

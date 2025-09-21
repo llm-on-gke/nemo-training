@@ -62,52 +62,33 @@ def recipe(
   pretrain.trainer.enable_checkpointing = False
 
   #pretrain.trainer.plugins = bf16_with_fp8_mixed()
-  pretrain.trainer.strategy.pipeline_model_parallel_size = 16
-  pretrain.trainer.strategy.tensor_model_parallel_size = 1
-  pretrain.trainer.strategy.expert_model_parallel_size = 8
-  pretrain.trainer.strategy.virtual_pipeline_model_parallel_size = None
-  pretrain.trainer.strategy.expert_tensor_parallel_size = 1
+  #pretrain.trainer.strategy.pipeline_model_parallel_size = 16
+  #pretrain.trainer.strategy.tensor_model_parallel_size = 1
+  #pretrain.trainer.strategy.expert_model_parallel_size = 8
+  #pretrain.trainer.strategy.virtual_pipeline_model_parallel_size = None
+  #pretrain.trainer.strategy.expert_tensor_parallel_size = 1
 
   # Log every step.
   pretrain.trainer.log_every_n_steps = 1
 
-  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] num_nodes=32
-  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] num_gpus_per_node=8
-  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] mbs=1
-  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] gbs=2048
-  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] tp_size=2
-  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] pp_size=16
-  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] cp_size=1
-  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] vp_size=1
-  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] ep_size=8
-  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] etp_size=1
-  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] enable_cuda_graphs=True
-  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] use_mcore_fsdp=False
-  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] recompute_layers=0
-  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] activation_offload_layers=0
-  #[NeMo I 2025-09-19 17:33:25 nemo_logging:393] recompute_modules=None
-  #[NeMo I 2025-09-19 17:03:27 nemo_logging:393] keep_fsdp_fp8_transpose_cache=False
-  #[NeMo I 2025-09-19 17:03:27 nemo_logging:393] use_user_buffer_registration=False
-  #[NeMo I 2025-09-19 17:03:27 nemo_logging:393] use_sharp=False
-
   pretrain = override_recipe_configs(
         pretrain,
-        32,
+        32, #num_nodes
         1, #mbs
         2048, #gbs
         2, #TP
-        16,
-        1,
-        1,
-        8,
-        1,
-        False,
-        False,
-        0,
-        0,
-        None,
-        False,
-        False,
+        16, #PP
+        1, #CP
+        1, #VP
+        8, #EP
+        1, #ETP
+        False, #enable_cuda_graphs
+        False, #use_mcore_fsdp
+        0, #recompute_layers
+        0, #activation_offload_layers
+        None, #recompute_layers
+        False, #use_user_buffer_registration
+        False, #use_sharp
     )
 
   return pretrain
