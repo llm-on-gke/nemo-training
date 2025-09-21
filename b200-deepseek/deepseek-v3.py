@@ -89,6 +89,7 @@ def recipe(
         None, #recompute_layers
         False, #use_user_buffer_registration
         False, #use_sharp
+        True, #enable deepep
     )
 
   return pretrain

@@ -56,6 +56,7 @@ def override_recipe_configs(
     recompute_modules: Optional[List[str]] = None,
     use_user_buffer_registration: Optional[bool] = None,
     use_sharp: Optional[bool] = None,
+    enable_deepep: Optional[bool] = None,]
 ):
     """
     DeepSeek V3 pre-train recipe aimed at achieving best possible performance.
@@ -75,16 +76,19 @@ def override_recipe_configs(
     # Token dispatcher configs. For H100 we use deepEP and for Blackwell,
     # because deepEP is not supported yet, we use all-to-all dispatcher with
     # token drop. After deepEP is supported, we can use deepEP dispatcher.
+    # For DeepEP
     #if args.gpu.lower() in ['h100']:
-    #    recipe.model.config.moe_token_dispatcher_type = "flex"
-    #    recipe.model.config.moe_enable_deepep = True
-    #    recipe.model.config.moe_shared_expert_overlap = False  # not supported for deepEP
-    # use force load balance for reducing variance in benchmarking
-    #    recipe.model.config.moe_router_force_load_balancing = True
-    #else:
-    recipe.model.config.moe_token_dispatcher_type = "alltoall"
-    recipe.model.config.moe_enable_deepep = False
-    recipe.model.config.moe_shared_expert_overlap = True
+    if enable_cuda_graphs:
+      recipe.model.config.moe_token_dispatcher_type = "flex"
+      recipe.model.config.moe_enable_deepep = True
+      recipe.model.config.moe_shared_expert_overlap = False  # not supported for deepEP
+    #     use force load balance for reducing variance in benchmarking
+      recipe.model.config.moe_router_force_load_balancing = True
+    else:
+      recipe.model.config.moe_token_dispatcher_type = "alltoall"
+      recipe.model.config.moe_enable_deepep = False
+      recipe.model.config.moe_shared_expert_overlap = True
+   
     if USE_TOKEN_DROP:
         recipe.trainer.callbacks.append(run.Config(MegatronTokenDropCallback))
 
