@@ -79,10 +79,10 @@ def override_recipe_configs(
     # For DeepEP
     #if args.gpu.lower() in ['h100']:
     if enable_deepep:
-      recipe.model.config.moe_token_dispatcher_type = "flex"
+      recipe.model.config.moe_token_dispatcher_type = "alltoall" #"flex"
       recipe.model.config.moe_enable_deepep = True
       recipe.model.config.moe_shared_expert_overlap = False  # not supported for deepEP
-      recipe.model.config.moe_expert_capacity_factor=None
+      #recipe.model.config.moe_expert_capacity_factor=None #rick
     #     use force load balance for reducing variance in benchmarking
       recipe.model.config.moe_router_force_load_balancing = True
     else:
