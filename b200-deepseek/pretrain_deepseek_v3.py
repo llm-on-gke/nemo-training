@@ -35,7 +35,7 @@ from helpers import (
 from utils import dump_config_diff_from_base_recipe, hf_tokenizer
 
 HF_MODEL_URI = "deepseek-ai/DeepSeek-V3-Base"
-USE_TOKEN_DROP = False  # Use token drop callback
+USE_TOKEN_DROP = True  # Use token drop callback
 
 
 def override_recipe_configs(
