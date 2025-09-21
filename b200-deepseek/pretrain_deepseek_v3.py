@@ -56,7 +56,7 @@ def override_recipe_configs(
     recompute_modules: Optional[List[str]] = None,
     use_user_buffer_registration: Optional[bool] = None,
     use_sharp: Optional[bool] = None,
-    enable_deepep: Optional[bool] = None,]
+    enable_deepep: Optional[bool] = None,
 ):
     """
     DeepSeek V3 pre-train recipe aimed at achieving best possible performance.
@@ -64,11 +64,11 @@ def override_recipe_configs(
     #recipe = pretrain_recipe(performance_mode=True)
 
     # reset recompute args in the default recipe
-    #if args.recompute_modules is None:
-    #    recipe.model.config.recompute_granularity = None
-    #    recipe.model.config.recompute_method = None
-    #    recipe.model.config.recompute_num_layers = None
-    #    recipe.model.config.recompute_modules = None
+    if recompute_modules is None:
+        recipe.model.config.recompute_granularity = None
+        recipe.model.config.recompute_method = None
+        recipe.model.config.recompute_num_layers = None
+        recipe.model.config.recompute_modules = None
 
     #if not hasattr(recipe.trainer, "callbacks") or recipe.trainer.callbacks is None:
     #    recipe.trainer.callbacks = []
@@ -78,7 +78,7 @@ def override_recipe_configs(
     # token drop. After deepEP is supported, we can use deepEP dispatcher.
     # For DeepEP
     #if args.gpu.lower() in ['h100']:
-    if enable_cuda_graphs:
+    if enable_deepep:
       recipe.model.config.moe_token_dispatcher_type = "flex"
       recipe.model.config.moe_enable_deepep = True
       recipe.model.config.moe_shared_expert_overlap = False  # not supported for deepEP
