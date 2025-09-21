@@ -82,7 +82,7 @@ def recipe(
         1, #VP
         8, #EP
         1, #ETP
-        False, #enable_cuda_graphs
+        True, #enable_cuda_graphs
         False, #use_mcore_fsdp
         0, #recompute_layers
         0, #activation_offload_layers
@@ -91,7 +91,7 @@ def recipe(
         False, #use_sharp
         False, #enable deepep
     )
-  pretrain.model.config.moe_expert_capacity_factor=None #rick
+  
   return pretrain
 
 
