@@ -21,7 +21,7 @@ spec:
           metadata:
             annotations:
               kueue.x-k8s.io/podset-preferred-topology: "kubernetes.io/hostname"
-              gke-gcsfuse/volumes: "true"
+              #gke-gcsfuse/volumes: "true"
               networking.gke.io/default-interface: 'eth0'
               networking.gke.io/interfaces: |
                [
@@ -37,10 +37,6 @@ spec:
                 {"interfaceName":"eth9","network":"rdma-7"}
                ]
           spec:
-            #restartPolicy: Never # dws
-            #hostNetwork: true
-            
-            #dnsPolicy: ClusterFirstWithHostNet
             nodeSelector:
                #cloud.google.com/gke-nodepool: dws-a3-mega #dws
                cloud.google.com/gke-accelerator: nvidia-b200 #non dws
@@ -51,19 +47,19 @@ spec:
             restartPolicy: Never
             serviceAccountName: storage-access
             volumes:
-            - name: gcs-fuse-csi-ephemeral
-              csi:
-                driver: gcsfuse.csi.storage.gke.io
-                readOnly: false
-                volumeAttributes:
-                   bucketName: rick-nemo-factory
-                   mountOptions: "implicit-dirs"
-                   fileCacheCapacity: "-1Mi"
-                   fileCacheForRangeRead: "true"
-                   metadataCacheTTLSeconds: "-1"
-                   metadataNegativeCacheTTLSeconds: "0"
-                   metadataStatCacheCapacity: "-1Mi"
-                   metadataTypeCacheCapacity: "-1Mi"
+            #- name: gcs-fuse-csi-ephemeral
+            #  csi:
+            #    driver: gcsfuse.csi.storage.gke.io
+            #    readOnly: false
+            #    volumeAttributes:
+            #      bucketName: rick-nemo-factory
+            #      mountOptions: "implicit-dirs"
+            #      fileCacheCapacity: "-1Mi"
+            #      fileCacheForRangeRead: "true"
+            #       metadataCacheTTLSeconds: "-1"
+            #       metadataNegativeCacheTTLSeconds: "0"
+            #       metadataStatCacheCapacity: "-1Mi"
+            #       metadataTypeCacheCapacity: "-1Mi"
             - name: library-dir-host
               hostPath:
                 path: /home/kubernetes/bin/nvidia
@@ -184,8 +180,8 @@ spec:
                  mountPath: /root/.cache/modelscope
                - name: output
                  mountPath: /app/output
-               - name: gcs-fuse-csi-ephemeral
-                 mountPath: /gcs-dir
+               #- name: gcs-fuse-csi-ephemeral
+               #  mountPath: /gcs-dir
                
                
            

@@ -40,6 +40,7 @@ mkdir -p ${explicit_log_dir}/nsys
 
 cd /home/nemo-training/b200-deepseek
 
+export TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC=600 
 OMP_NUM_THREADS=12 NSYS_CONFIG_DIRECTIVES="AgentLaunchTimeoutSec=240;AppLaunchTimeoutSec=240" TORCH_NCCL_ENABLE_MONITORING=0 \
 /usr/local/bin/nsys profile -s none -t nvtx,cuda --capture-range=cudaProfilerApi --capture-range-end=stop \
 -o ${explicit_log_dir}/nsys/noderank-${JOB_COMPLETION_INDEX} \
@@ -55,7 +56,7 @@ torchrun \
 ${NEMO_LAUNCH_SCRIPT} --factory "recipe()" \
 trainer.num_nodes="$NNODES" \
 log.explicit_log_dir="${explicit_log_dir}" \
-trainer.max_steps=10 trainer.num_nodes=${NNODES} trainer.devices=8 trainer.strategy.expert_model_parallel_size=8 data.global_batch_size=2048
+trainer.max_steps=20 trainer.num_nodes=${NNODES} trainer.devices=8 
 
 if [[ "$JOB_COMPLETION_INDEX" == "0" ]]; then
   mkdir -p ${ARTIFACT_DIR}
