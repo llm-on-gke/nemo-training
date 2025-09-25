@@ -160,7 +160,7 @@ spec:
                 git clone https://github.com/llm-on-gke/DeepEP.git ./deepep
                 cd deepep
                 #NVSHMEM_DIR=/home/dpsk_a2a/deepep-nvshmem python setup.py install
-                TORCH_CUDA_ARCH_LIST="10.0" NVSHMEM_DIR="/home/dpsk_a2a/deepep-nvshmem" pip install -e .
+                #TORCH_CUDA_ARCH_LIST="10.0" NVSHMEM_DIR="/home/dpsk_a2a/deepep-nvshmem" pip install -e .
                 
                 cd /home
                 git clone https://github.com/llm-on-gke/nemo-training
