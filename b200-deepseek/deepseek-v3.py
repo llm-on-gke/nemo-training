@@ -94,7 +94,7 @@ def recipe(
         "fp8", #compute_type
         "cs", #fp8_recipe
     )
-  recipe.model.config.moe_expert_capacity_factor=None #rick
+  pretrain.model.config.moe_expert_capacity_factor=None #rick
   return pretrain
 
 
