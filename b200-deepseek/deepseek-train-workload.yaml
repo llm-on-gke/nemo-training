@@ -4,8 +4,8 @@ apiVersion: jobset.x-k8s.io/v1alpha2
 kind: JobSet
 metadata:
   name: nemo
-  annotations:
-   kueue.x-k8s.io/queue-name: a4
+  #annotations:
+    #kueue.x-k8s.io/queue-name: a4
 spec:
   network:
     enableDNSHostnames: true
@@ -20,7 +20,7 @@ spec:
         template:
           metadata:
             annotations:
-              kueue.x-k8s.io/podset-preferred-topology: "kubernetes.io/hostname"
+              #kueue.x-k8s.io/podset-preferred-topology: "kubernetes.io/hostname"
               #gke-gcsfuse/volumes: "true"
               networking.gke.io/default-interface: 'eth0'
               networking.gke.io/interfaces: |
@@ -155,6 +155,13 @@ spec:
                 
                 echo "Pod on $(hostname --fqdn) is running"
                 echo "Pod is assigned job index of $JOB_COMPLETION_INDEX"
+                cd /home/dpsk_a2a/
+                rm -r -f deepep
+                git clone https://github.com/llm-on-gke/DeepEP.git ./deepep
+                cd deepep
+                #NVSHMEM_DIR=/home/dpsk_a2a/deepep-nvshmem python setup.py install
+                TORCH_CUDA_ARCH_LIST="10.0" NVSHMEM_DIR="/home/dpsk_a2a/deepep-nvshmem" pip install -e .
+                
                 cd /home
                 git clone https://github.com/llm-on-gke/nemo-training
                 cd nemo-training/b200-deepseek
