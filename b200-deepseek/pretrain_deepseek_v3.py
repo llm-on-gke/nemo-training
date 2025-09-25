@@ -171,11 +171,11 @@ def override_recipe_configs(
 
     # data module configs
     #if args.use_hf_tokenizer:
-    #    recipe.data.tokenizer = hf_tokenizer(HF_MODEL_URI)
+    recipe.data.tokenizer = hf_tokenizer(HF_MODEL_URI)
     #else:
-    recipe.data.tokenizer = run.Config(
-            get_nmt_tokenizer, library="null", model_name="NullTokenizer", vocab_size=129280
-    )
+    #recipe.data.tokenizer = run.Config(
+    #        get_nmt_tokenizer, library="null", model_name="NullTokenizer", vocab_size=129280
+    #)
     recipe.model.tokenizer = recipe.data.tokenizer
 
     return recipe
