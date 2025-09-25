@@ -81,7 +81,7 @@ def recipe(
         8, #PP
         1, #CP
         1, #VP
-        8, #EP
+        4, #EP
         1, #ETP
         True, #enable_cuda_graphs
         False, #use_mcore_fsdp
