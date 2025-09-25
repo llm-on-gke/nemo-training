@@ -41,6 +41,7 @@ mkdir -p ${explicit_log_dir}/nsys
 cd /home/nemo-training/b200-deepseek
 
 export TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC=600 
+unset NCCL_NVLS_ENABLE 
 OMP_NUM_THREADS=12 NSYS_CONFIG_DIRECTIVES="AgentLaunchTimeoutSec=240;AppLaunchTimeoutSec=240" TORCH_NCCL_ENABLE_MONITORING=0 \
 /usr/local/bin/nsys profile -s none -t nvtx,cuda --capture-range=cudaProfilerApi --capture-range-end=stop \
 -o ${explicit_log_dir}/nsys/noderank-${JOB_COMPLETION_INDEX} \

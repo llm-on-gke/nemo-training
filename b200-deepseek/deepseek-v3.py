@@ -76,12 +76,13 @@ def recipe(
         32, #num_nodes
         1, #mbs
         1024, #gbs
+        20, #max_steps
         1, #TP
         16, #PP
         1, #CP
         1, #VP
-        1, #EP
-        8, #ETP
+        8, #EP
+        1, #ETP
         True, #enable_cuda_graphs
         False, #use_mcore_fsdp
         0, #recompute_layers
@@ -90,6 +91,8 @@ def recipe(
         False, #use_user_buffer_registration
         False, #use_sharp
         False, #enable deepep
+        "fp8", #compute_type
+        "cs", #fp8_recipe
     )
   
   return pretrain

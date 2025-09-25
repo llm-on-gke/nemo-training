@@ -43,6 +43,7 @@ def override_recipe_configs(
     num_nodes: int,
     mbs: int,
     gbs: int,
+    max_steps: int,
     tp_size: int,
     pp_size: int,
     cp_size: int,
@@ -57,6 +58,8 @@ def override_recipe_configs(
     use_user_buffer_registration: Optional[bool] = None,
     use_sharp: Optional[bool] = None,
     enable_deepep: Optional[bool] = None,
+    compute_dtype: Optional[str]='bf16',
+    fp8_recipe: Optional[str]=None,
 ):
     """
     DeepSeek V3 pre-train recipe aimed at achieving best possible performance.
@@ -149,8 +152,8 @@ def override_recipe_configs(
         use_sharp=use_sharp,
         recompute_layers=recompute_layers,
         activation_offload_layers=activation_offload_layers,
-        compute_dtype="fp8",
-        fp8_recipe="cs",
+        compute_dtype=compute_dtype,
+        fp8_recipe=fp8_recipe,
         recompute_modules=recompute_modules,
         use_te_act_func=None,
         act_func_fp8_input_store=None,

@@ -285,7 +285,7 @@ def set_cuda_graph_configs(recipe, enable_cuda_graphs: bool, task: str):
     Set CUDA graph related configs.
     """
     recipe.model.config.enable_cuda_graph = enable_cuda_graphs
-    recipe.trainer.strategy.use_te_rng_tracker = enable_cuda_graphs
+    recipe.model.config.use_te_rng_tracker = enable_cuda_graphs
     if (
         task in ["none", "lora"]
         and hasattr(recipe.data, "packed_sequence_specs")
