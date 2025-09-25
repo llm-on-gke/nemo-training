@@ -3,7 +3,7 @@
 apiVersion: jobset.x-k8s.io/v1alpha2
 kind: JobSet
 metadata:
-  name: pytorch
+  name: nemo
   annotations:
    kueue.x-k8s.io/queue-name: a4
 spec:
@@ -97,7 +97,7 @@ spec:
                      name: huggingface
                      key: HF_TOKEN
               - name: MASTER_ADDR
-                value: "pytorch-workers-0-0.pytorch.default.svc.cluster.local"
+                value: "nemo-workers-0-0.nemo.default.svc.cluster.local"
               - name: MASTER_PORT
                 value: "3389"
               - name: NNODES
