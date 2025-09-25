@@ -22,6 +22,8 @@ RUN rm -rf /root/.cache /tmp/*
 
 ## the dependency of IBGDA
 #RUN ln -s /usr/lib/x86_64-linux-gnu/libmlx5.so.1 /usr/lib/x86_64-linux-gnu/libmlx5.so
+RUN rm -f /usr/lib/x86_64-linux-gnu/libmlx5.so && \
+    ln -s /usr/lib/x86_64-linux-gnu/libmlx5.so.1 /usr/lib/x86_64-linux-gnu/libmlx5.so
 
 ## Clone and build deepep and deepep-nvshmem
 WORKDIR /home/dpsk_a2a
