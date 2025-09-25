@@ -26,7 +26,7 @@ RUN rm -rf /root/.cache /tmp/*
 ## Clone and build deepep and deepep-nvshmem
 WORKDIR /home/dpsk_a2a
 RUN git clone https://github.com/llm-on-gke/DeepEP.git ./deepep
-RUN cd ./deepep && git checkout v1.2.1 && cd /home/dpsk_a2a
+RUN cd ./deepep  && cd /home/dpsk_a2a
 RUN wget https://developer.download.nvidia.com/compute/nvshmem/redist/libnvshmem/linux-x86_64/libnvshmem-linux-x86_64-3.3.9_cuda12-archive.tar.xz -O nvshmem_src.tar.xz
 RUN tar -xvf nvshmem_src.tar.xz && mv libnvshmem-linux-x86_64-3.3.9_cuda12-archive deepep-nvshmem
 
