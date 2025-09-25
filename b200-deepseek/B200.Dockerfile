@@ -21,7 +21,7 @@ RUN unset PIP_CONSTRAINT && NVTE_CUDA_ARCHS="90;100" NVTE_BUILD_THREADS_PER_JOB=
 RUN rm -rf /root/.cache /tmp/*
 
 ## the dependency of IBGDA
-RUN ln -s /usr/lib/x86_64-linux-gnu/libmlx5.so.1 /usr/lib/x86_64-linux-gnu/libmlx5.so
+#RUN ln -s /usr/lib/x86_64-linux-gnu/libmlx5.so.1 /usr/lib/x86_64-linux-gnu/libmlx5.so
 
 ## Clone and build deepep and deepep-nvshmem
 WORKDIR /home/dpsk_a2a
