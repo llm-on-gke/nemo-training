@@ -34,6 +34,11 @@ def recipe(
 
   pretrain.trainer.limit_val_batches = 0.0
   pretrain.trainer.val_check_interval = 100
+  
+  #print("LOCAL_RANK: ", os.environ["LOCAL_RANK"])
+  local_rank=os.environ['LOCAL_RANK']
+  os.environ['NVSHMEM_ENABLE_NIC_PE_MAPPING'] = '1'
+  os.environ['NVSHMEM_HCA_LIST'] = f'mlx5_{local_rank}:1'
 
   # Add the Nsys profiling callback if enabled.
   if profile_enabled:
