@@ -90,7 +90,7 @@ def recipe(
         None, #recompute_layers
         False, #use_user_buffer_registration
         False, #use_sharp
-        False, #enable deepep
+        True, #enable deepep
         "fp8", #compute_type
         "cs", #fp8_recipe
     )
