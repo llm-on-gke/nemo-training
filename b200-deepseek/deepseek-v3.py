@@ -8,7 +8,7 @@ from nemo.collections.llm.recipes.precision.mixed_precision import bf16_with_fp8
 
 from pretrain_deepseek_v3 import override_recipe_configs
 import nemo_run as run
-
+import os
 
 def recipe(
     profile_enabled: bool = False,
