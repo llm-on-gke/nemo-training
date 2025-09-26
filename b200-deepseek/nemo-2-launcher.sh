@@ -26,9 +26,9 @@ echo "Launching Torch distributed on the node rank $JOB_COMPLETION_INDEX out of 
 # git clone https://github.com/NVIDIA/NeMo
 
 # 2. Install dependencies
-cd NeMo
-git checkout r2.4.0
-pip install '.[all]'
+#cd NeMo
+#git checkout r2.4.0
+#pip install '.[all]'
 #pip install megatron-core@git+https://github.com/NVIDIA/Megatron-LM.git@core_r0.13.0
 cd /workspace
 git clone https://github.com/vwxyzjn/Megatron-LM/
