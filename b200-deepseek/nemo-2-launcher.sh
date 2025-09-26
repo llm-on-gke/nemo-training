@@ -3,6 +3,9 @@ ldconfig $LD_LIBRARY_PATH
 echo "Added $LD_LIBRARY_PATH to ldconfig:"
 ldconfig -p | grep libcuda | sed 's/^/  /'
 echo ""
+source /usr/local/gib/scripts/set_nccl_env.sh
+export NCCL_SOCKET_IFNAME="eth0,eth1"
+
 if [[ -n "${EXPLICIT_LOG_DIR}" ]]; then
   explicit_log_dir=${EXPLICIT_LOG_DIR}
 else
