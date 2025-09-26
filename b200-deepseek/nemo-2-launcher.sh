@@ -21,14 +21,15 @@ echo "Launching Torch distributed on the node rank $JOB_COMPLETION_INDEX out of 
 
 
 # Update nemo run so we can export the config.
-#pip install git+https://github.com/NVIDIA/NeMo-Run.git@6550ff68204e5095452098eed3765ed765de5d33
-# export NEMO_HOME=/workspace/NeMo
-# git clone https://github.com/NVIDIA/NeMo
+pip install git+https://github.com/NVIDIA/NeMo-Run.git@6550ff68204e5095452098eed3765ed765de5d33
+
+export NEMO_HOME=/workspace/NeMo
+ git clone https://github.com/NVIDIA/NeMo
 
 # 2. Install dependencies
-#cd NeMo
-#git checkout r2.4.0
-#pip install '.[all]'
+cd NeMo
+git checkout r2.4.0
+pip install '.[all]'
 #pip install megatron-core@git+https://github.com/NVIDIA/Megatron-LM.git@core_r0.13.0
 cd /workspace
 git clone https://github.com/vwxyzjn/Megatron-LM/
@@ -40,9 +41,9 @@ pip install -e .
 # Export the nemo2 config to yaml.
 python ${NEMO_LAUNCH_SCRIPT} --factory "recipe()" \
 trainer.num_nodes="$NNODES" \
-log.explicit_log_dir="${explicit_log_dir}" \
-trainer.max_steps=10 trainer.devices=8 trainer.strategy.tensor_model_parallel_size=1 trainer.strategy.expert_model_parallel_size=8 data.global_batch_size=2048 \
---to-yaml exported_nemo_config.yaml
+#log.explicit_log_dir="${explicit_log_dir}" \
+#trainer.max_steps=10 trainer.devices=8 trainer.strategy.tensor_model_parallel_size=1 trainer.strategy.expert_model_parallel_size=8 data.global_batch_size=2048 \
+#--to-yaml exported_nemo_config.yaml
 
 # Create the nsys directory.
 mkdir -p ${explicit_log_dir}/nsys
