@@ -501,24 +501,24 @@ def set_primary_perf_configs(
     #) or use_te_act_func, "act_func_fp8_input_store requires use_te_act_func to be True"
     recipe.model.config.activation_func_fp8_input_store = act_func_fp8_input_store or False
 
-    recipe = set_perf_optimization_configs(
-        recipe=recipe,
-        use_mcore_fsdp=use_mcore_fsdp,
-        enable_cuda_graphs=enable_cuda_graphs,
-        task=task,
-        tp_size=tp_size,
-        pp_size=pp_size,
-        vp_size=vp_size,
-        compute_dtype=compute_dtype,
-        fp8_recipe=fp8_recipe,
-        recompute_layers=recompute_layers,
-        activation_offload_layers=activation_offload_layers,
-        recompute_modules=recompute_modules,
-        use_fsdp_double_buffer=use_fsdp_double_buffer,
-        use_user_buffer_registration=use_user_buffer_registration,
-        use_sharp=use_sharp,
-        keep_fsdp_fp8_transpose_cache=keep_fsdp_fp8_transpose_cache,
-    )
+    #recipe = set_perf_optimization_configs(
+    #    recipe=recipe,
+    #    use_mcore_fsdp=use_mcore_fsdp,
+    #    enable_cuda_graphs=enable_cuda_graphs,
+    #    task=task,
+    #    tp_size=tp_size,
+    #    pp_size=pp_size,
+    #    vp_size=vp_size,
+    #    compute_dtype=compute_dtype,
+    #    fp8_recipe=fp8_recipe,
+    #    recompute_layers=recompute_layers,
+    #    activation_offload_layers=activation_offload_layers,
+    #    recompute_modules=recompute_modules,
+    #    use_fsdp_double_buffer=use_fsdp_double_buffer,
+    #    use_user_buffer_registration=use_user_buffer_registration,
+    #    use_sharp=use_sharp,
+    #    keep_fsdp_fp8_transpose_cache=keep_fsdp_fp8_transpose_cache,
+    #)
 
     return recipe
 

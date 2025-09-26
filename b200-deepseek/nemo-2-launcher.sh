@@ -24,7 +24,7 @@ echo "Launching Torch distributed on the node rank $JOB_COMPLETION_INDEX out of 
 pip install git+https://github.com/NVIDIA/NeMo-Run.git@6550ff68204e5095452098eed3765ed765de5d33
 
 export NEMO_HOME=/workspace/NeMo
- git clone https://github.com/NVIDIA/NeMo
+git clone https://github.com/NVIDIA/NeMo
 
 # 2. Install dependencies
 cd NeMo
