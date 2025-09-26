@@ -78,7 +78,7 @@ def recipe(
         2048, #gbs
         20, #max_steps
         1, #TP
-        16 #PP
+        16, #PP
         1, #CP
         1, #VP
         8, #EP
