@@ -88,7 +88,7 @@ def override_recipe_configs(
       #use force load balance for reducing variance in benchmarking
       recipe.model.config.moe_router_force_load_balancing = True
       USE_TOKEN_DROP = False
-      recipe.trainer.callbacks.append(run.Config(DeepEPCallback))
+      #recipe.trainer.callbacks.append(run.Config(DeepEPCallback))
 
     else:
       recipe.model.config.moe_token_dispatcher_type = "alltoall"
