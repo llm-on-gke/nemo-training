@@ -4,6 +4,26 @@ echo "Added $LD_LIBRARY_PATH to ldconfig:"
 ldconfig -p | grep libcuda | sed 's/^/  /'
 echo ""
 source /usr/local/gib/scripts/set_nccl_env.sh
+export NCCL_SOCKET_IFNAME="eth0,eth1"
+export NCCL_TUNER_CONFIG_PATH=/usr/local/gib/configs/tuner_config_a4.txtpb
+
+export TRITON_CACHE_DIR="/tmp/triton-cache/"
+#export NCCL_DEBUG=INFO
+export NCCL_DEBUG_SUBSYS=ALL
+export CUDA_DEVICE_MAX_CONNECTIONS=32
+export NVTE_FWD_LAYERNORM_SM_MARGIN=20
+export NVTE_BWD_LAYERNORM_SM_MARGIN=20
+export TORCH_NCCL_AVOID_RECORD_STREAMS=0
+export NVTE_ALLOW_NONDETERMINISTIC_ALGO=1
+#export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export NCCL_NVLS_ENABLE=0
+export NVTE_FUSED_ATTN=1
+export NVTE_NORM_FWD_USE_CUDNN=1
+export NVTE_NORM_BWD_USE_CUDNN=1
+export PYTHONWARNINGS=ignore
+export TOKENIZERS_PARALLELISM=false # to avoid HF warnings
+export DEEPEP_COMM_TIMEOUT_MS=30000
+
 if [[ -n "${EXPLICIT_LOG_DIR}" ]]; then
   explicit_log_dir=${EXPLICIT_LOG_DIR}
 else
