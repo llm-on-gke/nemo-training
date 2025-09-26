@@ -31,8 +31,8 @@ cd NeMo
 #pip install '.[all]'
 #pip install megatron-core@git+https://github.com/NVIDIA/Megatron-LM.git@core_r0.13.0
 cd /workspace
-#git clone https://github.com/Nvidia/Megatron-LM/
-#cd Megatron-LM
+git clone https://github.com/Nvidia/Megatron-LM/
+cd Megatron-LM
 #git checkout core_r0.13.0 
 pip install -e .
 
