@@ -3,9 +3,6 @@ ldconfig $LD_LIBRARY_PATH
 echo "Added $LD_LIBRARY_PATH to ldconfig:"
 ldconfig -p | grep libcuda | sed 's/^/  /'
 echo ""
-source /usr/local/gib/scripts/set_nccl_env.sh
-export NCCL_SOCKET_IFNAME="eth0,eth1"
-
 if [[ -n "${EXPLICIT_LOG_DIR}" ]]; then
   explicit_log_dir=${EXPLICIT_LOG_DIR}
 else
@@ -21,8 +18,7 @@ echo "Launching Torch distributed on the node rank $JOB_COMPLETION_INDEX out of 
 
 
 # Update nemo run so we can export the config.
-pip install git+https://github.com/NVIDIA/NeMo-Run.git@6550ff68204e5095452098eed3765ed765de5d33
-
+#pip install git+https://github.com/NVIDIA/NeMo-Run.git@6550ff68204e5095452098eed3765ed765de5d33
 export NEMO_HOME=/workspace/NeMo
 git clone https://github.com/NVIDIA/NeMo
 
@@ -30,20 +26,14 @@ git clone https://github.com/NVIDIA/NeMo
 cd NeMo
 git checkout r2.4.0
 pip install '.[all]'
-#pip install megatron-core@git+https://github.com/NVIDIA/Megatron-LM.git@core_r0.13.0
-cd /workspace
-git clone https://github.com/vwxyzjn/Megatron-LM/
-cd Megatron-LM
-#git checkout core_r0.13.0 
-pip install -e .
-
+pip install megatron-core@git+https://github.com/NVIDIA/Megatron-LM.git@core_r0.13.0
 #pip install nemo_run@git+https://github.com/NVIDIA/NeMo-Run.git
 # Export the nemo2 config to yaml.
 python ${NEMO_LAUNCH_SCRIPT} --factory "recipe()" \
 trainer.num_nodes="$NNODES" \
-#log.explicit_log_dir="${explicit_log_dir}" \
-#trainer.max_steps=10 trainer.devices=8 trainer.strategy.tensor_model_parallel_size=1 trainer.strategy.expert_model_parallel_size=8 data.global_batch_size=2048 \
-#--to-yaml exported_nemo_config.yaml
+log.explicit_log_dir="${explicit_log_dir}" \
+trainer.max_steps=10 trainer.devices=8 trainer.strategy.tensor_model_parallel_size=1 trainer.strategy.expert_model_parallel_size=8 data.global_batch_size=2048 \
+--to-yaml exported_nemo_config.yaml
 
 # Create the nsys directory.
 mkdir -p ${explicit_log_dir}/nsys
@@ -51,8 +41,7 @@ mkdir -p ${explicit_log_dir}/nsys
 cd /home/nemo-training/b200-deepseek
 
 export TORCH_NCCL_HEARTBEAT_TIMEOUT_SEC=600 
-unset NCCL_NVLS_ENABLE 
-NVSHMEM_DEBUG=INFO PYTORCH_CUDA_ALLOC_CONF="expandable_segments:False" OMP_NUM_THREADS=12 NSYS_CONFIG_DIRECTIVES="AgentLaunchTimeoutSec=240;AppLaunchTimeoutSec=240" TORCH_NCCL_ENABLE_MONITORING=0 \
+NVSHMEM_DEBUG=INFO OMP_NUM_THREADS=12 NSYS_CONFIG_DIRECTIVES="AgentLaunchTimeoutSec=240;AppLaunchTimeoutSec=240" TORCH_NCCL_ENABLE_MONITORING=0 \
 /usr/local/bin/nsys profile -s none -t nvtx,cuda --capture-range=cudaProfilerApi --capture-range-end=stop \
 -o ${explicit_log_dir}/nsys/noderank-${JOB_COMPLETION_INDEX} \
 --session-new "nemo-rank${JOB_COMPLETION_INDEX}"-$RANDOM \
