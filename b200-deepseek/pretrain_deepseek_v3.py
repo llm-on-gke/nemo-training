@@ -22,7 +22,7 @@ from nemo.collections.nlp.modules.common.tokenizer_utils import get_nmt_tokenize
 from nemo.lightning.pytorch.callbacks.megatron_enable_experimental_callback import MegatronEnableExperimentalCallback
 from nemo.lightning.pytorch.callbacks.moe_token_drop import MegatronTokenDropCallback
 from nemo.lightning.run.plugins import MemoryProfilePlugin, NsysPlugin
-
+from nemo.lightning.pytorch.callbacks.deep_ep import DeepEPCallback
 from argument_parser import parse_additional_slurm_params, parse_cli_args
 #from ..executors import slurm_executor
 from helpers import (
@@ -89,6 +89,8 @@ def override_recipe_configs(
       #use force load balance for reducing variance in benchmarking
       recipe.model.config.moe_router_force_load_balancing = True
       USE_TOKEN_DROP = False
+      recipe.trainer.callbacks.append(run.Config(DeepEPCallback))
+
     else:
       recipe.model.config.moe_token_dispatcher_type = "alltoall"
       recipe.model.config.moe_enable_deepep = False

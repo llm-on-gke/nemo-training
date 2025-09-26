@@ -29,9 +29,6 @@ echo "Launching Torch distributed on the node rank $JOB_COMPLETION_INDEX out of 
 pip install megatron-core@git+https://github.com/NVIDIA/Megatron-LM.git@core_r0.13.0
 #pip install nemo_run@git+https://github.com/NVIDIA/NeMo-Run.git
 # Export the nemo2 config to yaml.
-COMMIT=3f875fb57fcf2872d238f8c7cb199b171c424536
-TE="git+https://github.com/NVIDIA/TransformerEngine.git@$COMMIT"
-unset PIP_CONSTRAINT && NVTE_CUDA_ARCHS="90;100" NVTE_BUILD_THREADS_PER_JOB=8 NVTE_FRAMEWORK=pytorch pip install --no-cache-dir --no-build-isolation $TE
 
 python ${NEMO_LAUNCH_SCRIPT} --factory "recipe()" \
 trainer.num_nodes="$NNODES" \

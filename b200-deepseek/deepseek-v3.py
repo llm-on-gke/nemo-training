@@ -77,11 +77,11 @@ def recipe(
         1, #mbs
         1024, #gbs
         20, #max_steps
-        1, #TP
+        2, #TP
         8, #PP
         1, #CP
         1, #VP
-        32, #EP
+        16, #EP
         1, #ETP
         False, #enable_cuda_graphs
         False, #use_mcore_fsdp
