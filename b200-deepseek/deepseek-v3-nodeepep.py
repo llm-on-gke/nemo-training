@@ -78,10 +78,10 @@ def recipe(
         2048, #gbs
         20, #max_steps
         1, #TP
-        8, #PP
+        16, #PP
         1, #CP
         1, #VP
-        32, #EP
+        8, #EP
         1, #ETP
         False, #enable_cuda_graphs
         False, #use_mcore_fsdp
@@ -90,7 +90,7 @@ def recipe(
         None, #recompute_layers
         False, #use_user_buffer_registration
         False, #use_sharp
-        True, #enable deepep
+        False, #enable deepep
         "fp8", #compute_type
         "cs", #fp8_recipe
     )

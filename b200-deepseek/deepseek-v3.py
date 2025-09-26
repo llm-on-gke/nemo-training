@@ -78,10 +78,10 @@ def recipe(
         2048, #gbs
         20, #max_steps
         1, #TP
-        16, #PP
+        8, #PP
         1, #CP
         1, #VP
-        8, #EP
+        32, #EP
         1, #ETP
         False, #enable_cuda_graphs
         False, #use_mcore_fsdp
