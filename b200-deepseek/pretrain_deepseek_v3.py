@@ -22,7 +22,6 @@ from nemo.collections.nlp.modules.common.tokenizer_utils import get_nmt_tokenize
 from nemo.lightning.pytorch.callbacks.megatron_enable_experimental_callback import MegatronEnableExperimentalCallback
 from nemo.lightning.pytorch.callbacks.moe_token_drop import MegatronTokenDropCallback
 from nemo.lightning.run.plugins import MemoryProfilePlugin, NsysPlugin
-from nemo.lightning.pytorch.callbacks.deep_ep import DeepEPCallback
 from argument_parser import parse_additional_slurm_params, parse_cli_args
 #from ..executors import slurm_executor
 from helpers import (
