@@ -28,8 +28,9 @@ def recipe(
   Returns:
       A Nemo2 training pretrain.
   """
-  print("LOCAL_RANK: ", os.environ["LOCAL_RANK"])
+  
   local_rank=os.environ['LOCAL_RANK']
+  print(f"LOCAL_RANK: {local_rank}")
   os.environ['NVSHMEM_ENABLE_NIC_PE_MAPPING'] = '1'
   os.environ['NVSHMEM_HCA_LIST'] = f'mlx5_{local_rank}:1'
 
@@ -110,9 +111,9 @@ def recipe(
   if layout is not None:
       layout = list([list(x) for x in layout])  # yield all the elements
   if enable_deepep:
-      recipe.trainer.strategy.pipeline_model_parallel_layout="Et*3|(tt|)*29m|L" #"Et*2|(tt|)*22t|(tt|)*7mL"
+      pretrain.trainer.strategy.pipeline_model_parallel_layout="Et*3|(tt|)*29m|L" #"Et*2|(tt|)*22t|(tt|)*7mL"
   else:
-      recipe.trainer.strategy.pipeline_model_parallel_layout = layout
+      pretrain.trainer.strategy.pipeline_model_parallel_layout = layout
   
 
   # The following knobs are not needed if we specify layout
