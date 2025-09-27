@@ -39,7 +39,8 @@ echo "Launching Torch distributed on the node rank $JOB_COMPLETION_INDEX out of 
 
 
 # Update nemo run so we can export the config.
-#pip install git+https://github.com/NVIDIA/NeMo-Run.git@6550ff68204e5095452098eed3765ed765de5d33
+pip install git+https://github.com/NVIDIA/NeMo-Run.git@6550ff68204e5095452098eed3765ed765de5d33
+
 #export NEMO_HOME=/workspace/NeMo
 #git clone https://github.com/NVIDIA/NeMo
 
@@ -47,8 +48,8 @@ echo "Launching Torch distributed on the node rank $JOB_COMPLETION_INDEX out of 
 # cd NeMo
 #git checkout r2.4.0
 #pip install '.[all]'
-pip install megatron-core@git+https://github.com/NVIDIA/Megatron-LM.git@core_r0.13.0
-pip install nemo_run@git+https://github.com/NVIDIA/NeMo-Run.git
+#pip install megatron-core@git+https://github.com/NVIDIA/Megatron-LM.git@core_r0.13.0
+#pip install nemo_run@git+https://github.com/NVIDIA/NeMo-Run.git
 # Export the nemo2 config to yaml.
 
 python ${NEMO_LAUNCH_SCRIPT} --factory "recipe()" \
