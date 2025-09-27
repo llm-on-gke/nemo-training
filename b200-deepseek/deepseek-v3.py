@@ -4,6 +4,7 @@ from nemo.collections import llm
 from nemo.collections.llm.recipes import deepseek_v3
 from nemo.lightning.pytorch.callbacks import NsysCallback
 from nemo.lightning.pytorch.callbacks.flops_callback import FLOPsMeasurementCallback
+from nemo.lightning.pytorch.callbacks.deepep import DeepEpCallback
 import nemo_run as run
 from nemo.collections.llm.recipes.precision.mixed_precision import bf16_with_fp8_mixed, bf16_with_fp8_current_scaling_mixed
 import os
@@ -75,7 +76,8 @@ def recipe(
     pretrain.model.config.moe_token_dispatcher_type = "flex"
     pretrain.model.config.moe_enable_deepep = True
     pretrain.model.config.moe_shared_expert_overlap = False
-   #pretrain.trainer.callbacks.append(run.Config(MegatronTokenDropCallback))
+    pretrain.trainer.plugins
+    pretrain.trainer.callbacks.append(run.Config(DeepEPCallback))
   else: 
     pretrain.model.config.moe_token_dispatcher_type = "alltoall"
     pretrain.model.config.moe_enable_deepep = False
