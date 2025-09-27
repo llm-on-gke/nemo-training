@@ -83,6 +83,7 @@ def recipe(
     pretrain.model.config.moe_enable_deepep = False
     pretrain.model.config.moe_shared_expert_overlap = true
     pretrain.trainer.callbacks.append(run.Config(MegatronTokenDropCallback))
+    pretrain.model.config.enable_cuda_graph = True
   pretrain.model.config.moe_permute_fusion = True
   pretrain.model.config.apply_rope_fusion = True
   pretrain.trainer.callbacks.append(run.Config(MegatronEnableExperimentalCallback))
@@ -129,7 +130,7 @@ def recipe(
   pretrain.trainer.plugins.first_last_layers_bf16 = False
   pretrain.trainer.plugins.grad_reduce_in_fp32 = False
 
-  #pretrain.model.config.enable_cuda_graph = True
+  
   pretrain.trainer.strategy.use_te_rng_tracker = True
 
   pretrain.trainer.strategy.sequence_parallel = True
