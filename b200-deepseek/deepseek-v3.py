@@ -29,12 +29,10 @@ def recipe(
       A Nemo2 training pretrain.
   """
   
-  #local_rank=os.environ['LOCAL_RANK']
-  #print(f"LOCAL_RANK: {local_rank}")
-  #os.environ['NVSHMEM_ENABLE_NIC_PE_MAPPING'] = '1'
-  #os.environ['NVSHMEM_HCA_LIST'] = f'mlx5_{local_rank}:1'
-
-  # Start from the Nemo standard pretrain.
+  os.environ['NVSHMEM_ENABLE_NIC_PE_MAPPING'] = '1'
+  local_rank=os.environ['LOCAL_RANK']
+  os.environ['NVSHMEM_HCA_LIST'] = f'mlx5_{local_rank}:1'
+   # Start from the Nemo standard pretrain.
   pretrain = deepseek_v3.pretrain_recipe(
       num_nodes=1, num_gpus_per_node=8, performance_mode=True
   )
@@ -81,7 +79,7 @@ def recipe(
   else: 
     pretrain.model.config.moe_token_dispatcher_type = "alltoall"
     pretrain.model.config.moe_enable_deepep = False
-    pretrain.model.config.moe_shared_expert_overlap = true
+    pretrain.model.config.moe_shared_expert_overlap = True
     pretrain.trainer.callbacks.append(run.Config(MegatronTokenDropCallback))
     pretrain.model.config.enable_cuda_graph = True
   pretrain.model.config.moe_permute_fusion = True
