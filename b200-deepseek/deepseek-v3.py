@@ -29,10 +29,10 @@ def recipe(
       A Nemo2 training pretrain.
   """
   
-  local_rank=os.environ['LOCAL_RANK']
+  #local_rank=os.environ['LOCAL_RANK']
   #print(f"LOCAL_RANK: {local_rank}")
-  os.environ['NVSHMEM_ENABLE_NIC_PE_MAPPING'] = '1'
-  os.environ['NVSHMEM_HCA_LIST'] = f'mlx5_{local_rank}:1'
+  #os.environ['NVSHMEM_ENABLE_NIC_PE_MAPPING'] = '1'
+  #os.environ['NVSHMEM_HCA_LIST'] = f'mlx5_{local_rank}:1'
 
   # Start from the Nemo standard pretrain.
   pretrain = deepseek_v3.pretrain_recipe(
