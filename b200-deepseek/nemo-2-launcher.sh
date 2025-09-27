@@ -37,13 +37,11 @@ if [[ -n "${TOKENIZER_PATH}" ]]; then
 fi
 echo "Launching Torch distributed on the node rank $JOB_COMPLETION_INDEX out of $NNODES nodes"
 
-
-# Update nemo run so we can export the config.
-pip install git+https://github.com/NVIDIA/NeMo-Run.git@6550ff68204e5095452098eed3765ed765de5d33
-
-#export NEMO_HOME=/workspace/NeMo
-#git clone https://github.com/NVIDIA/NeMo
-
+export NEMO_HOME=/workspace/NeMo
+cd /home
+git clone https://github.com/NVIDIA/NeMo
+cd NeMo 
+pip install -e . 
 # 2. Install dependencies
 # cd NeMo
 #git checkout r2.4.0
