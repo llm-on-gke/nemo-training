@@ -80,9 +80,9 @@ def recipe(
         pretrain,
         32, #num_nodes
         1, #mbs
-        1024, #gbs
+        2048, #gbs
         20, #max_steps
-        2, #TP
+        1, #TP
         8, #PP
         1, #CP
         1, #VP
