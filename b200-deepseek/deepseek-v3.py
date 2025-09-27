@@ -30,7 +30,7 @@ def recipe(
   """
   
   local_rank=os.environ['LOCAL_RANK']
-  print(f"LOCAL_RANK: {local_rank}")
+  #print(f"LOCAL_RANK: {local_rank}")
   os.environ['NVSHMEM_ENABLE_NIC_PE_MAPPING'] = '1'
   os.environ['NVSHMEM_HCA_LIST'] = f'mlx5_{local_rank}:1'
 
@@ -63,7 +63,7 @@ def recipe(
           data_config=pretrain.data,
       )
   )
-  enable_deepep=True
+  enable_deepep=False
   # Disable checkpointing.
   pretrain.log.ckpt = None
   pretrain.trainer.enable_checkpointing = False
