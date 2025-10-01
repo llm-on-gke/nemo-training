@@ -1,5 +1,5 @@
 export LD_LIBRARY_PATH=$NCCL_PLUGIN_PATH:$LD_LIBRARY_PATH
-ldconfig $LD_LIBRARY_PATH
+#ldconfig $LD_LIBRARY_PATH
 echo "Added $LD_LIBRARY_PATH to ldconfig:"
 ldconfig -p | grep libcuda | sed 's/^/  /'
 echo ""
