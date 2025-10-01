@@ -80,7 +80,7 @@ spec:
 
             containers:
             - name: pytorch
-              image: us-east1-docker.pkg.dev/samskillman-hpc-benchmarks/gke-llm/nemo-deepep #nvcr.io/nvidia/nemo:25.07
+              image: nvcr.io/nvidia/nemo:25.09 #us-east1-docker.pkg.dev/samskillman-hpc-benchmarks/gke-llm/nemo-deepep 
               imagePullPolicy: Always
               # image: gcr.io/k8s-staging-jobset/pytorch-mnist:latest
               ports:
