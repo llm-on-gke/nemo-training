@@ -62,7 +62,7 @@ def recipe(
           data_config=pretrain.data,
       )
   )
-  enable_deepep=False
+  enable_deepep=True
   # Disable checkpointing.
   pretrain.log.ckpt = None
   pretrain.trainer.enable_checkpointing = False

@@ -62,7 +62,7 @@ def recipe(
           data_config=pretrain.data,
       )
   )
-  enable_deepep=True
+  enable_deepep=False
   # Disable checkpointing.
   pretrain.log.ckpt = None
   pretrain.trainer.enable_checkpointing = False
@@ -137,12 +137,18 @@ def recipe(
 
   pretrain.data.micro_batch_size=1
   pretrain.data.global_batch_size = 1024
-  pretrain.trainer.strategy.tensor_model_parallel_size = 1
-  pretrain.trainer.strategy.pipeline_model_parallel_size = 8
-  pretrain.trainer.strategy.expert_model_parallel_size = 32
-  pretrain.trainer.strategy.virtual_pipeline_model_parallel_size = None
-
-
+  if enable_deepep:
+    pretrain.trainer.strategy.tensor_model_parallel_size = 1
+    pretrain.trainer.strategy.pipeline_model_parallel_size = 8
+    pretrain.trainer.strategy.expert_model_parallel_size = 32
+    pretrain.trainer.strategy.virtual_pipeline_model_parallel_size = None
+  else:
+    
+    pretrain.trainer.strategy.tensor_model_parallel_size = 1
+    pretrain.trainer.strategy.pipeline_model_parallel_size = 16
+    pretrain.trainer.strategy.expert_model_parallel_size = 8
+    pretrain.trainer.strategy.virtual_pipeline_model_parallel_size = None
+  
   # Log every step.
   pretrain.trainer.log_every_n_steps = 1
 
