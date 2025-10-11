@@ -98,6 +98,8 @@ def recipe(
     pretrain.model.config.moe_shared_expert_overlap = True
     pretrain.trainer.callbacks.append(run.Config(MegatronTokenDropCallback))
     pretrain.model.config.enable_cuda_graph = True
+    pretrain.model.config.mtp_num_layers=0
+    pretrain.model.config.mtp_loss_scaling_factor=0
   pretrain.model.config.moe_permute_fusion = True
   pretrain.model.config.apply_rope_fusion = True
   pretrain.trainer.callbacks.append(run.Config(MegatronEnableExperimentalCallback))
