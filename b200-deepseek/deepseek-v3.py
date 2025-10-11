@@ -154,6 +154,29 @@ def recipe(
  
   # Log every step.
   pretrain.trainer.log_every_n_steps = 1
+  pretrain = override_recipe_configs(
+        pretrain,
+        32, #num_nodes
+        1, #mbs
+        2048, #gbs
+        20, #max_steps
+        1, #TP
+        8, #PP
+        1, #CP
+        1, #VP
+        32, #EP
+        1, #ETP
+        False, #enable_cuda_graphs
+        False, #use_mcore_fsdp
+        0, #recompute_layers
+        0, #activation_offload_layers
+        None, #recompute_layers
+        False, #use_user_buffer_registration
+        False, #use_sharp
+        enable_deepep, #enable deepep
+        "fp8", #compute_type
+        "cs", #fp8_recipe
+    )
 
   return pretrain
 
