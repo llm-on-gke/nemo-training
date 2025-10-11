@@ -41,9 +41,9 @@ export NEMO_HOME=/workspace/NeMo
 cd /home
 git clone https://github.com/NVIDIA/NeMo
 cd NeMo 
-git checkout v2.4.1
+git checkout v2.5.0
 pip install '.[all]'
-pip install megatron-core@git+https://github.com/NVIDIA/Megatron-LM.git@core_r0.13.0
+pip install megatron-core@git+https://github.com/NVIDIA/Megatron-LM.git@core_r0.14.0
 #pip install nemo_run@git+https://github.com/NVIDIA/NeMo-Run.git
 # Export the nemo2 config to yaml.
 
