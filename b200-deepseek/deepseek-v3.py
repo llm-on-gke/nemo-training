@@ -30,9 +30,9 @@ def recipe(
       A Nemo2 training pretrain.
   """
   
-  os.environ['NVSHMEM_ENABLE_NIC_PE_MAPPING'] = '1'
-  local_rank=os.environ['LOCAL_RANK']
-  os.environ['NVSHMEM_HCA_LIST'] = f'mlx5_{local_rank}:1'
+  #os.environ['NVSHMEM_ENABLE_NIC_PE_MAPPING'] = '1'
+  #local_rank=os.environ['LOCAL_RANK']
+  #os.environ['NVSHMEM_HCA_LIST'] = f'mlx5_{local_rank}:1'
    # Start from the Nemo standard pretrain.
   pretrain = deepseek_v3.pretrain_recipe(
       num_nodes=1, num_gpus_per_node=8, performance_mode=True
@@ -72,6 +72,20 @@ def recipe(
   pretrain.model.config.recompute_num_layers = None
   pretrain.model.config.recompute_modules = None
   
+  pretrain.data.micro_batch_size=1
+  pretrain.data.global_batch_size = 1024
+  if enable_deepep:
+    pretrain.trainer.strategy.tensor_model_parallel_size = 1
+    pretrain.trainer.strategy.pipeline_model_parallel_size = 8
+    pretrain.trainer.strategy.expert_model_parallel_size = 32
+    pretrain.trainer.strategy.virtual_pipeline_model_parallel_size = None
+  else:
+    pretrain.trainer.strategy.tensor_model_parallel_size = 1
+    pretrain.trainer.strategy.pipeline_model_parallel_size = 16
+    pretrain.trainer.strategy.expert_model_parallel_size = 8
+    pretrain.trainer.strategy.virtual_pipeline_model_parallel_size = None
+  
+
   if enable_deepep :
     pretrain.model.config.moe_token_dispatcher_type = "flex"
     pretrain.model.config.moe_enable_deepep = True
@@ -135,20 +149,7 @@ def recipe(
 
   pretrain.trainer.strategy.sequence_parallel = True
 
-  pretrain.data.micro_batch_size=1
-  pretrain.data.global_batch_size = 1024
-  if enable_deepep:
-    pretrain.trainer.strategy.tensor_model_parallel_size = 1
-    pretrain.trainer.strategy.pipeline_model_parallel_size = 8
-    pretrain.trainer.strategy.expert_model_parallel_size = 32
-    pretrain.trainer.strategy.virtual_pipeline_model_parallel_size = None
-  else:
-    
-    pretrain.trainer.strategy.tensor_model_parallel_size = 1
-    pretrain.trainer.strategy.pipeline_model_parallel_size = 16
-    pretrain.trainer.strategy.expert_model_parallel_size = 8
-    pretrain.trainer.strategy.virtual_pipeline_model_parallel_size = None
-  
+ 
   # Log every step.
   pretrain.trainer.log_every_n_steps = 1
 
